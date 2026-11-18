@@ -5,262 +5,623 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="theme-color" content="#080b09">
-    <meta name="description" content="سكينة - رفيقك للصلاة والقرآن والأذكار">
+    <meta name="theme-color" content="#080d0b">
+    <meta name="description" content="سَكِينَة - رفيقك للصلاة والقرآن والأذكار">
 
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="سكينة">
+    <meta name="apple-mobile-web-app-title" content="سَكِينَة">
 
-    <title>SAKINAH | سكينة</title>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="SAKINAH">
+
+    <title>SAKINAH | سَكِينَة</title>
 
     <link rel="manifest" href="manifest.json">
-
     <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
     <link rel="apple-touch-icon" href="icons/icon-192.png">
 
-    <link rel="stylesheet" href="style.css">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Amiri+Quran&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+<!-- =====================================
+     TOP BAR
+===================================== -->
+
 <header class="topbar">
     <div class="brand">
         <div class="logo">س</div>
+
         <div>
             <h2>سَكِينَة</h2>
             <small>SAKINAH</small>
         </div>
     </div>
-    <button class="icon-btn" onclick="showPage('settings')">⚙</button>
+
+    <button
+        class="icon-btn"
+        type="button"
+        onclick="showPage('settings')"
+        aria-label="الإعدادات"
+    >⚙</button>
 </header>
 
-<!-- الرئيسية -->
+
+<!-- =====================================
+     HOME
+===================================== -->
+
 <main id="homePage" class="page active">
+
     <section class="hero">
+
         <p id="hijriDate">التاريخ الهجري</p>
+
         <h1 id="clock">--:--:--</h1>
+
         <p id="gregDate"></p>
 
         <div class="next-prayer">
+
             <div>
                 <small>الصلاة القادمة</small>
                 <h2 id="nextName">الفجر</h2>
             </div>
+
             <strong id="countdown">--:--:--</strong>
+
         </div>
 
         <p id="locationLabel">جارٍ تحديد الموقع...</p>
-        <button onclick="requestLocation()" class="outline-btn">
+
+        <button
+            type="button"
+            onclick="requestLocation()"
+            class="outline-btn"
+        >
             تحديث الموقع
         </button>
+
     </section>
 
+
+    <!-- PRAYER TIMES -->
+
     <section class="section">
+
         <h3>مواقيت الصلاة</h3>
+
         <div id="prayerGrid" class="prayer-grid">
             جاري تحميل المواقيت...
         </div>
+
     </section>
 
+
+    <!-- QUICK ACCESS -->
+
     <section class="panel">
+
         <h3>عباداتك اليومية</h3>
+
         <div class="quick-grid">
-            <button onclick="showPage('quran')">۞<span>القرآن الكريم</span></button>
-            <button onclick="showPage('azkar')">◉<span>الأذكار</span></button>
-            <button onclick="showPage('qibla')">⌖<span>القبلة</span></button>
-            <button onclick="showPage('tracker')">✧<span>عباداتي</span></button>
+
+            <button type="button" onclick="showPage('quran')">
+                ۞
+                <span>القرآن الكريم</span>
+            </button>
+
+            <button type="button" onclick="showPage('azkar')">
+                ◉
+                <span>الأذكار</span>
+            </button>
+
+            <button type="button" onclick="showPage('qibla')">
+                ⌖
+                <span>القبلة</span>
+            </button>
+
+            <button type="button" onclick="showPage('tracker')">
+                ✧
+                <span>عباداتي</span>
+            </button>
+
         </div>
+
     </section>
 
+
+    <!-- DAILY VERSE -->
+
     <section class="panel">
+
         <h3>آية للتدبر</h3>
+
         <p id="dailyVerse" class="daily-verse">
             أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ
         </p>
-        <p id="dailyVerseRef">سورة الرعد</p>
-        <button class="outline-btn" onclick="newVerse()">آية أخرى</button>
+
+        <p id="dailyVerseRef">الرعد: 28</p>
+
+        <button
+            type="button"
+            class="outline-btn"
+            onclick="newVerse()"
+        >
+            آية أخرى
+        </button>
+
     </section>
+
 </main>
 
-<!-- القرآن الكريم -->
+
+<!-- =====================================
+     QURAN
+===================================== -->
+
 <main id="quranPage" class="page">
+
     <h2>القرآن الكريم</h2>
+
     <p class="muted">مصحف بالرسم العثماني</p>
 
+
     <div class="tabs">
-        <button onclick="quranTab('surahTab')">السور</button>
-        <button onclick="quranTab('juzTab')">الأجزاء</button>
+
+        <button
+            type="button"
+            onclick="quranTab('surahTab')"
+        >
+            السور
+        </button>
+
+        <button
+            type="button"
+            onclick="quranTab('juzTab')"
+        >
+            الأجزاء
+        </button>
+
     </div>
+
 
     <input
         id="quranSearch"
         class="search"
+        type="search"
         placeholder="ابحث عن سورة أو جزء..."
+        autocomplete="off"
         oninput="filterQuran()"
+        aria-label="البحث في القرآن"
     >
 
+
     <div id="surahTab">
-        <div id="surahList"></div>
+        <div id="surahList">
+            جارٍ تحميل السور...
+        </div>
     </div>
+
 
     <div id="juzTab" hidden>
-        <div id="juzList"></div>
+        <div id="juzList">
+            جارٍ تحميل الأجزاء...
+        </div>
     </div>
+
+
+    <!-- QURAN READER -->
 
     <section id="reader" class="panel" hidden>
+
         <div class="reader-header">
+
             <h2 id="readerTitle">القرآن الكريم</h2>
-            <button class="outline-btn" onclick="closeReader()">إغلاق</button>
+
+            <button
+                type="button"
+                class="outline-btn"
+                onclick="closeReader()"
+            >
+                إغلاق
+            </button>
+
         </div>
 
-        <div id="basmala" class="quran-basmala" hidden></div>
+        <div
+            id="basmala"
+            class="quran-basmala"
+            hidden
+        ></div>
 
-        <div id="ayahs" class="quran-text">
+        <div
+            id="ayahs"
+            class="quran-text"
+        >
             جارٍ تحميل القرآن...
         </div>
+
     </section>
+
 </main>
 
-<!-- الأذكار -->
+
+<!-- =====================================
+     ADHKAR
+===================================== -->
+
 <main id="azkarPage" class="page">
+
     <h2>الأذكار</h2>
+
     <p class="muted">حصنك اليومي</p>
 
+
     <div class="quick-grid">
-        <button onclick="showAzkar('morning')">☀️<span>الصباح</span></button>
-        <button onclick="showAzkar('evening')">🌙<span>المساء</span></button>
-        <button onclick="showAzkar('after')">◉<span>بعد الصلاة</span></button>
-        <button onclick="showAzkar('sleep')">☆<span>النوم</span></button>
-        <button onclick="showAzkar('wake')">☼<span>الاستيقاظ</span></button>
-        <button onclick="showAzkar('daily')">♡<span>أذكار متنوعة</span></button>
-        <button onclick="showAzkar('sayyid')">✦<span>سيد الاستغفار</span></button>
-        <button onclick="showAzkar('ruqya')">✧<span>الرقية الشرعية</span></button>
+
+        <button type="button" onclick="showAzkar('morning')">
+            ☀
+            <span>أذكار الصباح</span>
+        </button>
+
+        <button type="button" onclick="showAzkar('evening')">
+            ☾
+            <span>أذكار المساء</span>
+        </button>
+
+        <button type="button" onclick="showAzkar('after')">
+            ◉
+            <span>بعد الصلاة</span>
+        </button>
+
+        <button type="button" onclick="showAzkar('sleep')">
+            ☆
+            <span>أذكار النوم</span>
+        </button>
+
+        <button type="button" onclick="showAzkar('wake')">
+            ☼
+            <span>الاستيقاظ</span>
+        </button>
+
+        <button type="button" onclick="showAzkar('daily')">
+            ♡
+            <span>أذكار متنوعة</span>
+        </button>
+
+        <button type="button" onclick="showAzkar('sayyid')">
+            ✦
+            <span>سيد الاستغفار</span>
+        </button>
+
+        <button type="button" onclick="showAzkar('ruqya')">
+            ✧
+            <span>الرقية الشرعية</span>
+        </button>
+
     </div>
 
+
     <div id="azkarResults"></div>
+
 </main>
 
-<!-- القبلة -->
+
+<!-- =====================================
+     QIBLA
+===================================== -->
+
 <main id="qiblaPage" class="page">
+
     <h2>اتجاه القبلة</h2>
 
+    <p class="muted">
+        حدد اتجاه الكعبة من موقعك
+    </p>
+
+
     <section class="panel center">
-        <div class="qibla-icon">⌖</div>
+
+        <div class="qibla-compass" id="qiblaCompass">
+
+            <div class="compass-direction north">N</div>
+            <div class="compass-direction east">E</div>
+            <div class="compass-direction south">S</div>
+            <div class="compass-direction west">W</div>
+
+            <div class="compass-ring">
+
+                <div
+                    class="compass-needle"
+                    id="qiblaNeedle"
+                >
+                    <div class="needle-top"></div>
+                    <div class="needle-bottom"></div>
+                </div>
+
+                <div class="compass-center">
+                    <span>س</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
         <h1 id="qiblaDegree">--°</h1>
-        <p id="qiblaDirection" class="muted">اتجاه القبلة من موقعك</p>
-        <button class="primary-btn" onclick="calculateQibla()">تحديد الاتجاه</button>
+
+        <p id="qiblaDirection" class="muted">
+            زاوية القبلة من الشمال الحقيقي
+        </p>
+
+        <p id="compassStatus" class="muted">
+            احسب اتجاه القبلة أولاً
+        </p>
+
+
+        <button
+            type="button"
+            class="primary-btn"
+            onclick="calculateQibla()"
+        >
+            حساب اتجاه القبلة
+        </button>
+
+
+        <button
+            type="button"
+            class="outline-btn"
+            id="startCompass"
+            onclick="startQiblaCompass()"
+        >
+            تشغيل البوصلة
+        </button>
+
     </section>
+
 </main>
 
-<!-- العبادات اليومية -->
+
+<!-- =====================================
+     TRACKER
+===================================== -->
+
 <main id="trackerPage" class="page">
+
     <h2>عباداتي اليومية</h2>
 
+    <p class="muted">
+        تابع إنجاز عباداتك خلال اليوم
+    </p>
+
+
     <section class="panel">
+
         <h3 id="progressText">0 / 8</h3>
-        <div class="progress">
+
+        <div
+            class="progress"
+            role="progressbar"
+            aria-label="نسبة إنجاز العبادات"
+            aria-valuemin="0"
+            aria-valuemax="8"
+        >
             <span id="progressBar"></span>
         </div>
+
         <div id="trackerItems"></div>
+
     </section>
+
 </main>
 
-<!-- الإعدادات -->
+
+<!-- =====================================
+     SETTINGS
+===================================== -->
+
 <main id="settingsPage" class="page">
+
     <h2>الإعدادات</h2>
 
-    <section class="panel">
-        <h3>الإقامة التقديرية</h3>
-        <p class="muted">أدخل وقت الإقامة حسب مسجدك.</p>
-        <div id="iqamaSettings"></div>
-        <button class="primary-btn" onclick="saveIqama()">حفظ الإقامة</button>
-    </section>
+
+    <!-- IQAMA -->
 
     <section class="panel">
+
+        <h3>الإقامة التقديرية</h3>
+
+        <p class="muted">
+            أدخل وقت الإقامة حسب مسجدك.
+        </p>
+
+        <div id="iqamaSettings"></div>
+
+        <button
+            type="button"
+            class="primary-btn"
+            onclick="saveIqama()"
+        >
+            حفظ الإقامة
+        </button>
+
+    </section>
+
+
+    <!-- NOTIFICATIONS -->
+
+    <section class="panel">
+
         <h3>التنبيهات</h3>
+
 
         <label class="setting-row">
             تنبيهات الصلوات الخمس
             <input type="checkbox" id="prayerAlerts" checked>
         </label>
 
+
         <label class="setting-row">
             تنبيه الشروق
             <input type="checkbox" id="sunriseAlert" checked>
         </label>
+
 
         <label class="setting-row">
             أذكار الصباح
             <input type="checkbox" id="morningAlert" checked>
         </label>
 
+
         <label class="setting-row">
             أذكار المساء
             <input type="checkbox" id="eveningAlert" checked>
         </label>
+
 
         <label class="setting-row">
             صوت الأذان
             <input type="checkbox" id="adhanSound" checked>
         </label>
 
-        <button class="primary-btn" onclick="enableNotifications()">
+
+        <button
+            type="button"
+            class="primary-btn"
+            onclick="enableNotifications()"
+        >
             تفعيل الإشعارات
         </button>
 
-        <button class="outline-btn" onclick="testAdhanSound()">
+
+        <button
+            type="button"
+            class="outline-btn"
+            onclick="testAdhanSound()"
+        >
             تجربة صوت الأذان
         </button>
 
-        <p id="notificationStatus" class="muted">
+
+        <p
+            id="notificationStatus"
+            class="muted"
+            aria-live="polite"
+        >
             الإشعارات تحتاج موافقة المتصفح.
         </p>
+
     </section>
+
 </main>
 
-<!-- شريط التنقل -->
-<nav class="bottom-nav">
-    <button class="nav-item active" data-page="home" onclick="showPage('home')">
-        <b>⌂</b><small>الرئيسية</small>
+
+<!-- =====================================
+     BOTTOM NAVIGATION
+===================================== -->
+
+<nav class="bottom-nav" aria-label="التنقل الرئيسي">
+
+    <button
+        type="button"
+        class="nav-item active"
+        data-page="home"
+        onclick="showPage('home')"
+    >
+        <b>⌂</b>
+        <small>الرئيسية</small>
     </button>
 
-    <button class="nav-item" data-page="quran" onclick="showPage('quran')">
-        <b>۞</b><small>القرآن</small>
+
+    <button
+        type="button"
+        class="nav-item"
+        data-page="quran"
+        onclick="showPage('quran')"
+    >
+        <b>۞</b>
+        <small>القرآن</small>
     </button>
 
-    <button class="nav-item" data-page="azkar" onclick="showPage('azkar')">
-        <b>◉</b><small>الأذكار</small>
+
+    <button
+        type="button"
+        class="nav-item"
+        data-page="azkar"
+        onclick="showPage('azkar')"
+    >
+        <b>◉</b>
+        <small>الأذكار</small>
     </button>
 
-    <button class="nav-item" data-page="qibla" onclick="showPage('qibla')">
-        <b>⌖</b><small>القبلة</small>
+
+    <button
+        type="button"
+        class="nav-item"
+        data-page="qibla"
+        onclick="showPage('qibla')"
+    >
+        <b>⌖</b>
+        <small>القبلة</small>
     </button>
 
-    <button class="nav-item" data-page="settings" onclick="showPage('settings')">
-        <b>⚙</b><small>الإعدادات</small>
+
+    <button
+        type="button"
+        class="nav-item"
+        data-page="settings"
+        onclick="showPage('settings')"
+    >
+        <b>⚙</b>
+        <small>الإعدادات</small>
     </button>
+
 </nav>
+
+
+<!-- =====================================
+     SCRIPTS
+===================================== -->
 
 <script src="app.js"></script>
 
 <script>
+"use strict";
+
 if ("serviceWorker" in navigator) {
+
     window.addEventListener("load", async () => {
+
         try {
-            const registration = await navigator.serviceWorker.register(
-                "./service-worker.js"
+
+            const registration =
+                await navigator.serviceWorker.register(
+                    "./service-worker.js"
+                );
+
+            console.log(
+                "SAKINAH Service Worker registered:",
+                registration.scope
             );
 
-            console.log("SAKINAH Service Worker registered:", registration.scope);
         } catch (error) {
-            console.error("Service Worker registration failed:", error);
+
+            console.error(
+                "Service Worker registration failed:",
+                error
+            );
+
         }
+
     });
+
 }
 </script>
 
