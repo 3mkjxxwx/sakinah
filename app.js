@@ -47,28 +47,34 @@ function load(key, fallback = null) {
 function updateClock() {
     const now = new Date();
 
-    $("clock").textContent = now.toLocaleTimeString("ar-SA", {
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: true
-    });
+    if ($("clock")) {
+        $("clock").textContent = now.toLocaleTimeString("ar-SA", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: true
+        });
+    }
 
-    $("gregDate").textContent = now.toLocaleDateString("ar-SA", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-    });
-
-    $("hijriDate").textContent = new Intl.DateTimeFormat(
-        "ar-SA-u-ca-islamic-umalqura",
-        {
-            day: "numeric",
+    if ($("gregDate")) {
+        $("gregDate").textContent = now.toLocaleDateString("ar-SA", {
+            weekday: "long",
+            year: "numeric",
             month: "long",
-            year: "numeric"
-        }
-    ).format(now);
+            day: "numeric"
+        });
+    }
+
+    if ($("hijriDate")) {
+        $("hijriDate").textContent = new Intl.DateTimeFormat(
+            "ar-SA-u-ca-islamic-umalqura",
+            {
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            }
+        ).format(now);
+    }
 }
 
 // ======================================
@@ -78,12 +84,17 @@ function updateClock() {
 let coordinates = null;
 let timings = {};
 let currentPrayer = null;
+
 let notificationTimer = null;
+let countdownTimer = null;
+
 let lastAlerts = {};
 
 function requestLocation() {
     if (!navigator.geolocation) {
-        $("locationLabel").textContent = "الموقع غير مدعوم";
+        if ($("locationLabel")) {
+            $("locationLabel").textContent = "الموقع غير مدعوم";
+        }
         return;
     }
 
@@ -97,23 +108,34 @@ function requestLocation() {
             };
 
             save("sakinaLocation", coordinates);
+
             await loadPrayer();
         },
+
         () => {
             $("locationLabel").textContent =
                 "تعذر تحديد موقعك. اسمح بالوصول للموقع.";
         },
+
         {
             enableHighAccuracy: true,
-            timeout: 15000
+            timeout: 15000,
+            maximumAge: 300000
         }
     );
 }
+
+// ======================================
+// تحميل مواقيت الصلاة
+// ======================================
 
 async function loadPrayer() {
     if (!coordinates) return;
 
     try {
+        $("locationLabel").textContent =
+            "جارٍ تحميل مواقيت الصلاة...";
+
         const url = new URL(
             "https://api.aladhan.com/v1/timings"
         );
@@ -130,7 +152,11 @@ async function loadPrayer() {
 
         const result = await response.json();
 
-        if (result.code !== 200) {
+        if (
+            result.code !== 200 ||
+            !result.data ||
+            !result.data.timings
+        ) {
             throw new Error("Prayer data error");
         }
 
@@ -140,12 +166,12 @@ async function loadPrayer() {
             result.data.meta.timezone || "تم تحديد الموقع";
 
         renderPrayers();
-        updateCountdown();
 
+        startCountdown();
         startAlerts();
 
     } catch (error) {
-        console.error(error);
+        console.error("Prayer loading error:", error);
 
         $("locationLabel").textContent =
             "تعذر تحميل مواقيت الصلاة";
@@ -155,12 +181,16 @@ async function loadPrayer() {
     }
 }
 
-function parsePrayerTime(value, date = new Date()) {
+// ======================================
+// تحويل وقت الصلاة إلى تاريخ
+// ======================================
+
+function parsePrayerTime(value, baseDate = new Date()) {
     const match = String(value).match(/^(\d{1,2}):(\d{2})/);
 
     if (!match) return null;
 
-    const result = new Date(date);
+    const result = new Date(baseDate);
 
     result.setHours(
         Number(match[1]),
@@ -171,6 +201,10 @@ function parsePrayerTime(value, date = new Date()) {
 
     return result;
 }
+
+// ======================================
+// تنسيق الوقت
+// ======================================
 
 function formatTime(value) {
     const date = parsePrayerTime(value);
@@ -184,7 +218,13 @@ function formatTime(value) {
     });
 }
 
+// ======================================
+// عرض بطاقات الصلاة
+// ======================================
+
 function renderPrayers() {
+    if (!timings || !timings.Fajr) return;
+
     $("prayerGrid").innerHTML = prayerKeys.map(key => `
         <div class="prayer-card" id="prayer-${key}">
             <small>${prayerNames[key]}</small>
@@ -192,10 +232,16 @@ function renderPrayers() {
             ${key === "Sunrise" ? "<em>الشروق</em>" : ""}
         </div>
     `).join("");
+
+    updateCountdown();
 }
 
+// ======================================
+// حساب الصلاة القادمة
+// ======================================
+
 function updateCountdown() {
-    if (!timings.Fajr) return;
+    if (!timings || !timings.Fajr) return;
 
     const now = new Date();
 
@@ -210,50 +256,91 @@ function updateCountdown() {
     let upcoming = null;
 
     for (const key of keys) {
-        const date = parsePrayerTime(timings[key]);
+        const date = parsePrayerTime(timings[key], now);
 
-        if (date && date > now) {
-            upcoming = { key, date };
+        if (date && date.getTime() > now.getTime()) {
+            upcoming = {
+                key,
+                date
+            };
+
             break;
         }
     }
 
+    // إذا انتهت صلوات اليوم، ننتقل إلى فجر الغد
     if (!upcoming) {
-        const date = parsePrayerTime(timings.Fajr);
+        const tomorrow = new Date(now);
 
-        if (!date) return;
+        tomorrow.setDate(tomorrow.getDate() + 1);
 
-        date.setDate(date.getDate() + 1);
+        const fajrTomorrow = parsePrayerTime(
+            timings.Fajr,
+            tomorrow
+        );
+
+        if (!fajrTomorrow) return;
 
         upcoming = {
             key: "Fajr",
-            date
+            date: fajrTomorrow
         };
     }
 
     currentPrayer = upcoming.key;
 
-    const diff = Math.max(0, upcoming.date - now);
+    const diff = Math.max(
+        0,
+        upcoming.date.getTime() - now.getTime()
+    );
 
-    const hours = Math.floor(diff / 3600000);
-    const minutes = Math.floor(diff % 3600000 / 60000);
-    const seconds = Math.floor(diff % 60000 / 1000);
+    const totalSeconds = Math.floor(diff / 1000);
 
-    $("nextName").textContent = prayerNames[upcoming.key];
+    const hours = Math.floor(totalSeconds / 3600);
 
-    $("countdown").textContent = [
-        hours,
-        minutes,
-        seconds
-    ].map(x => String(x).padStart(2, "0")).join(":");
+    const minutes = Math.floor(
+        (totalSeconds % 3600) / 60
+    );
+
+    const seconds = totalSeconds % 60;
+
+    if ($("nextName")) {
+        $("nextName").textContent =
+            prayerNames[upcoming.key];
+    }
+
+    if ($("countdown")) {
+        $("countdown").textContent = [
+            hours,
+            minutes,
+            seconds
+        ].map(value =>
+            String(value).padStart(2, "0")
+        ).join(":");
+    }
 
     document.querySelectorAll(".prayer-card").forEach(card => {
-        card.classList.remove("active");
+        card.classList.toggle(
+            "active",
+            card.id === "prayer-" + upcoming.key
+        );
     });
+}
 
-    $("prayer-" + upcoming.key)?.classList.add("active");
+// ======================================
+// مؤقت العداد
+// ======================================
 
-    checkAlerts();
+function startCountdown() {
+    if (countdownTimer !== null) {
+        clearInterval(countdownTimer);
+    }
+
+    updateCountdown();
+
+    countdownTimer = setInterval(() => {
+        updateCountdown();
+    }, 1000);
 }
 
 // ======================================
@@ -369,7 +456,10 @@ function arabicNumber(number) {
     return new Intl.NumberFormat("ar-SA").format(number);
 }
 
+// ======================================
 // تحميل المصحف كاملاً
+// ======================================
+
 async function loadSurahs() {
     try {
         $("surahList").textContent =
@@ -409,7 +499,10 @@ async function loadSurahs() {
     }
 }
 
+// ======================================
 // عرض فهرس السور
+// ======================================
+
 function renderSurahs() {
     $("surahList").innerHTML = surahs.map(s => {
         const count = s.ayahs.filter(a => a.number > 0).length;
@@ -425,7 +518,10 @@ function renderSurahs() {
     }).join("");
 }
 
+// ======================================
 // عرض فهرس الأجزاء
+// ======================================
+
 function renderJuz() {
     $("juzList").innerHTML = Array.from(
         { length: 30 },
@@ -438,7 +534,10 @@ function renderJuz() {
     ).join("");
 }
 
+// ======================================
 // التبديل بين السور والأجزاء
+// ======================================
+
 function quranTab(tab) {
     currentQuranTab = tab;
 
@@ -450,7 +549,10 @@ function quranTab(tab) {
     filterQuran();
 }
 
+// ======================================
 // البحث
+// ======================================
+
 function filterQuran() {
     const query = $("quranSearch").value.trim();
 
@@ -489,7 +591,10 @@ function filterQuran() {
     }
 }
 
+// ======================================
 // استخراج جميع الآيات بترتيب المصحف
+// ======================================
+
 function getAllQuranAyahs() {
     if (!quranData) return [];
 
@@ -511,17 +616,32 @@ function getAllQuranAyahs() {
     return all;
 }
 
-// عرض الآيات دون تعديل نصها
+// ======================================
+// علامة نهاية الآية
+// ======================================
+
+function renderAyahMark(number) {
+    return `
+        <span class="ayah-mark" aria-label="رقم الآية ${number}">
+            ۝<span class="ayah-number">${arabicNumber(number)}</span>
+        </span>
+    `;
+}
+
+// ======================================
+// عرض الآيات
+// ======================================
+
 function renderQuranAyahs(ayahs) {
     return ayahs.map(ayah => `
-        <span class="ayah">${escapeHTML(ayah.text)}</span>
-        <span class="ayah-mark">
-            ۞ ${arabicNumber(ayah.number)}
-        </span>
+        <span class="ayah">${escapeHTML(ayah.text)}</span>${renderAyahMark(ayah.number)}
     `).join(" ");
 }
 
+// ======================================
 // إضافة مصدر القرآن
+// ======================================
+
 function addQuranAttribution(reader) {
     const oldCredit = reader.querySelector(".quran-source");
 
@@ -552,7 +672,7 @@ function addQuranAttribution(reader) {
 }
 
 // ======================================
-// عرض السورة أو الجزء - إصلاح البسملة
+// عرض السورة أو الجزء
 // ======================================
 
 function loadQuranText(title, ayahs, surahNumber = null) {
@@ -598,7 +718,7 @@ function loadQuranText(title, ayahs, surahNumber = null) {
 
             basmalaBox.innerHTML = `
                 ${escapeHTML(firstAyah.text)}
-                <span class="ayah-mark">۞ ١</span>
+                ${renderAyahMark(1)}
             `;
 
             displayAyahs = displayAyahs.filter(
@@ -626,7 +746,10 @@ function loadQuranText(title, ayahs, surahNumber = null) {
     });
 }
 
+// ======================================
 // فتح سورة
+// ======================================
+
 function readSurah(number) {
     if (!quranData) {
         alert("انتظر حتى يكتمل تحميل القرآن");
@@ -649,7 +772,10 @@ function readSurah(number) {
     );
 }
 
+// ======================================
 // فتح جزء
+// ======================================
+
 function readJuz(number) {
     if (!quranData) {
         alert("انتظر حتى يكتمل تحميل القرآن");
@@ -707,7 +833,10 @@ function readJuz(number) {
     );
 }
 
+// ======================================
 // إغلاق القارئ
+// ======================================
+
 function closeReader() {
     $("reader").hidden = true;
 
@@ -721,6 +850,11 @@ function closeReader() {
 // ======================================
 
 const azkar = {
+
+    // ----------------------------------
+    // أذكار الصباح
+    // ----------------------------------
+
     morning: [
         {
             text: "أَصْبَحْنَا وَأَصْبَحَ الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ",
@@ -749,6 +883,10 @@ const azkar = {
         }
     ],
 
+    // ----------------------------------
+    // أذكار المساء
+    // ----------------------------------
+
     evening: [
         {
             text: "أَمْسَيْنَا وَأَمْسَى الْمُلْكُ لِلَّهِ، وَالْحَمْدُ لِلَّهِ، لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ",
@@ -772,6 +910,10 @@ const azkar = {
         }
     ],
 
+    // ----------------------------------
+    // أذكار بعد الصلاة
+    // ----------------------------------
+
     after: [
         {
             text: "أَسْتَغْفِرُ اللَّهَ",
@@ -782,6 +924,11 @@ const azkar = {
             text: "اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ، تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ",
             count: 1,
             source: "صحيح مسلم"
+        },
+        {
+            text: "آيَةُ الْكُرْسِيِّ: اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ ۚ لَا تَأْخُذُهُ سِنَةٌ وَلَا نَوْمٌ ۚ لَهُ مَا فِي السَّمَاوَاتِ وَمَا فِي الْأَرْضِ ۗ مَنْ ذَا الَّذِي يَشْفَعُ عِنْدَهُ إِلَّا بِإِذْنِهِ ۚ يَعْلَمُ مَا بَيْنَ أَيْدِيهِمْ وَمَا خَلْفَهُمْ ۖ وَلَا يُحِيطُونَ بِشَيْءٍ مِنْ عِلْمِهِ إِلَّا بِمَا شَاءَ ۚ وَسِعَ كُرْسِيُّهُ السَّمَاوَاتِ وَالْأَرْضَ ۖ وَلَا يَئُودُهُ حِفْظُهُمَا ۚ وَهُوَ الْعَلِيُّ الْعَظِيمُ",
+            count: 1,
+            source: "سورة البقرة: 255"
         },
         {
             text: "سُبْحَانَ اللَّهِ",
@@ -801,9 +948,33 @@ const azkar = {
         {
             text: "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
             count: 1,
-            source: "صحيح مسلم"
+            source: "صحيح مسلم - إتمام المئة"
+        },
+        {
+            text: "قُلْ هُوَ اللَّهُ أَحَدٌ",
+            count: 1,
+            source: "سورة الإخلاص - بعد الصلاة"
+        },
+        {
+            text: "قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ",
+            count: 1,
+            source: "سورة الفلق - بعد الصلاة"
+        },
+        {
+            text: "قُلْ أَعُوذُ بِرَبِّ النَّاسِ",
+            count: 1,
+            source: "سورة الناس - بعد الصلاة"
+        },
+        {
+            text: "لَا إِلَٰهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ، يُحْيِي وَيُمِيتُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ",
+            count: 10,
+            source: "يقال بعد الفجر والمغرب"
         }
     ],
+
+    // ----------------------------------
+    // أذكار النوم
+    // ----------------------------------
 
     sleep: [
         {
@@ -828,6 +999,10 @@ const azkar = {
         }
     ],
 
+    // ----------------------------------
+    // أذكار الاستيقاظ
+    // ----------------------------------
+
     wake: [
         {
             text: "الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ",
@@ -835,6 +1010,10 @@ const azkar = {
             source: "صحيح البخاري"
         }
     ],
+
+    // ----------------------------------
+    // أذكار متنوعة
+    // ----------------------------------
 
     daily: [
         {
@@ -854,6 +1033,10 @@ const azkar = {
         }
     ],
 
+    // ----------------------------------
+    // سيد الاستغفار
+    // ----------------------------------
+
     sayyid: [
         {
             text: "اللَّهُمَّ أَنْتَ رَبِّي لَا إِلَٰهَ إِلَّا أَنْتَ، خَلَقْتَنِي وَأَنَا عَبْدُكَ، وَأَنَا عَلَى عَهْدِكَ وَوَعْدِكَ مَا اسْتَطَعْتُ، أَعُوذُ بِكَ مِنْ شَرِّ مَا صَنَعْتُ، أَبُوءُ لَكَ بِنِعْمَتِكَ عَلَيَّ، وَأَبُوءُ بِذَنْبِي، فَاغْفِرْ لِي، فَإِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ",
@@ -861,6 +1044,10 @@ const azkar = {
             source: "صحيح البخاري"
         }
     ],
+
+    // ----------------------------------
+    // الرقية الشرعية
+    // ----------------------------------
 
     ruqya: [
         {
@@ -891,6 +1078,10 @@ const azkar = {
     ]
 };
 
+// ======================================
+// عناوين الأذكار
+// ======================================
+
 const azkarTitles = {
     morning: "أذكار الصباح",
     evening: "أذكار المساء",
@@ -901,6 +1092,10 @@ const azkarTitles = {
     sayyid: "سيد الاستغفار",
     ruqya: "الرقية الشرعية"
 };
+
+// ======================================
+// عرض الأذكار
+// ======================================
 
 function showAzkar(type) {
     const list = azkar[type];
@@ -934,6 +1129,10 @@ function showAzkar(type) {
         behavior: "smooth"
     });
 }
+
+// ======================================
+// عداد التسبيح
+// ======================================
 
 function countZikr(button, max) {
     let count = Number(button.dataset.count || 0);
@@ -1130,6 +1329,10 @@ function enableNotifications() {
     });
 }
 
+// ======================================
+// فحص التنبيهات
+// ======================================
+
 function checkAlerts() {
     if (!timings.Fajr) return;
 
@@ -1200,6 +1403,10 @@ function checkAlerts() {
     }
 }
 
+// ======================================
+// التنبيهات اليومية
+// ======================================
+
 function sendDailyAlert(type, today) {
     const key = today + "_" + type;
 
@@ -1214,6 +1421,10 @@ function sendDailyAlert(type, today) {
     lastAlerts[key] = true;
 }
 
+// ======================================
+// إرسال إشعار
+// ======================================
+
 function notify(message) {
     if (
         "Notification" in window &&
@@ -1226,8 +1437,12 @@ function notify(message) {
     }
 }
 
+// ======================================
+// تشغيل التنبيهات
+// ======================================
+
 function startAlerts() {
-    if (notificationTimer) {
+    if (notificationTimer !== null) {
         clearInterval(notificationTimer);
     }
 
@@ -1312,6 +1527,18 @@ function showPage(page) {
         setupIqama();
     }
 }
+
+// ======================================
+// تحديث التطبيق عند الرجوع إليه
+// ======================================
+
+document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+        updateClock();
+        updateCountdown();
+        checkAlerts();
+    }
+});
 
 // ======================================
 // تشغيل التطبيق
