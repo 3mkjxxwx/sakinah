@@ -1,1159 +1,629 @@
-
 /* =========================================
-   SAKINAH — PREMIUM GLASS UI
-   Inspired by Apple iOS & macOS
-   ========================================= */
-
-* {
-    box-sizing: border-box;
-    -webkit-tap-highlight-color: transparent;
-}
+   SAKINAH — EMERALD LIQUID GLASS
+   Premium glossy glass upgrade
+   ضع هذا الجزء في نهاية style.css
+========================================= */
 
 :root {
-    color-scheme: dark;
+    --bg: #030805;
 
-    --bg: #070b09;
-    --bg2: #101a13;
+    --glass: rgba(17, 42, 27, .48);
+    --glass-light: rgba(255, 255, 255, .105);
+    --glass-dark: rgba(3, 15, 9, .82);
 
-    --glass: rgba(255, 255, 255, 0.055);
-    --glass-strong: rgba(255, 255, 255, 0.09);
-    --glass-light: rgba(255, 255, 255, 0.12);
+    --card: rgba(15, 39, 24, .52);
+    --card2: rgba(30, 65, 41, .48);
 
-    --card: rgba(19, 31, 23, 0.58);
-    --card2: rgba(29, 46, 34, 0.48);
+    --border: rgba(202, 239, 207, .20);
+    --border-light: rgba(255, 255, 255, .36);
 
-    --border: rgba(255, 255, 255, 0.12);
-    --border-gold: rgba(201, 173, 120, 0.42);
+    --gold: #d8b96e;
+    --gold-light: #ffe8a9;
 
-    --gold: #d7bd8c;
-    --gold2: #f0d9a9;
+    --text: #f5f8f3;
+    --muted: #aab9ad;
+    --green: #a8e2b6;
 
-    --green: #b2d0b6;
-    --green2: #6e9b78;
+    --blur: 28px;
 
-    --text: #f5f5ef;
-    --muted: #a0aaa1;
-
-    --blur: blur(24px) saturate(180%);
-    --shadow: 0 18px 55px rgba(0, 0, 0, .28);
-
-    --radius: 22px;
+    --shadow:
+        0 18px 55px rgba(0, 0, 0, .48),
+        0 0 24px rgba(35, 130, 69, .10),
+        inset 0 1px 0 rgba(255, 255, 255, .19),
+        inset 0 -1px 0 rgba(255, 255, 255, .035);
 }
 
-/* =========================================
-   GLOBAL
-   ========================================= */
-
-html {
-    scroll-behavior: smooth;
-    scrollbar-color: #405746 transparent;
-}
+/* BACKGROUND */
 
 body {
-    margin: 0;
-    min-height: 100vh;
-
     background:
-        radial-gradient(
-            ellipse at 15% 0%,
-            rgba(67, 112, 76, .24),
-            transparent 42%
-        ),
-        radial-gradient(
-            ellipse at 90% 35%,
-            rgba(201, 173, 120, .09),
-            transparent 35%
-        ),
-        radial-gradient(
-            ellipse at 50% 100%,
-            rgba(38, 80, 51, .18),
-            transparent 45%
-        ),
-        var(--bg);
+        radial-gradient(ellipse at 10% 5%,
+            rgba(26, 130, 66, .35), transparent 38%),
+        radial-gradient(ellipse at 95% 18%,
+            rgba(194, 157, 76, .17), transparent 35%),
+        radial-gradient(ellipse at 50% 85%,
+            rgba(12, 91, 48, .28), transparent 45%),
+        radial-gradient(ellipse at 50% 50%,
+            rgba(13, 35, 21, .5), transparent 70%),
+        #030805;
 
     background-attachment: fixed;
-
-    color: var(--text);
-
-    font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "SF Pro Display",
-        "Segoe UI",
-        system-ui,
-        sans-serif;
-
-    padding-bottom: 115px;
-
-    overflow-x: hidden;
 }
 
-button,
-input {
-    font: inherit;
-}
+/* GLASS SURFACES */
 
-button {
-    cursor: pointer;
-    color: inherit;
-    -webkit-appearance: none;
-}
-
-button:focus-visible,
-input:focus-visible {
-    outline: 2px solid var(--gold);
-    outline-offset: 4px;
-}
-
-[hidden] {
-    display: none !important;
-}
-
-::selection {
-    background: rgba(201, 173, 120, .35);
-    color: white;
-}
-
-/* =========================================
-   TOP BAR
-   ========================================= */
-
-.topbar {
-    width: min(100% - 30px, 760px);
-    height: 82px;
-
-    margin: auto;
-    padding: 12px 5px;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
+.panel,
+.hero,
+.prayer-card,
+.zikr-card,
+#surahList button,
+#juzList button,
+.tabs button,
+.search,
+.icon-btn,
+.quick-grid button,
+.iqama-setting input {
     position: relative;
-    z-index: 5;
-}
-
-.brand {
-    display: flex;
-    align-items: center;
-    gap: 13px;
-}
-
-.brand h2 {
-    margin: 0;
-    font-size: 20px;
-    font-weight: 650;
-    letter-spacing: .5px;
-}
-
-.brand small {
-    display: block;
-    margin-top: 3px;
-
-    color: var(--muted);
-    letter-spacing: 3px;
-    font-size: 10px;
-}
-
-.logo {
-    width: 46px;
-    height: 46px;
-
-    display: grid;
-    place-items: center;
-
-    border: 1px solid var(--border-gold);
-    border-radius: 16px;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255,255,255,.13),
-            rgba(255,255,255,.025)
-        );
-
-    backdrop-filter: var(--blur);
-    -webkit-backdrop-filter: var(--blur);
-
-    color: var(--gold2);
-    font-size: 26px;
-
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.15),
-        0 8px 25px rgba(0,0,0,.2);
-}
-
-.icon-btn {
-    background: var(--glass);
-    border: 1px solid var(--border);
-
-    padding: 11px 15px;
-    border-radius: 14px;
-
-    backdrop-filter: var(--blur);
-    -webkit-backdrop-filter: var(--blur);
-
-    transition: .25s;
-}
-
-.icon-btn:hover {
-    background: var(--glass-light);
-    border-color: var(--border-gold);
-}
-
-/* =========================================
-   PAGE SYSTEM
-   ========================================= */
-
-.page {
-    display: none;
-
-    width: min(100% - 30px, 700px);
-    margin: auto;
-
-    animation: pageEnter .4s ease;
-}
-
-.page.active {
-    display: block;
-}
-
-@keyframes pageEnter {
-    from {
-        opacity: 0;
-        transform: translateY(9px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* =========================================
-   HERO
-   ========================================= */
-
-.hero {
-    position: relative;
+    isolation: isolate;
     overflow: hidden;
 
     background:
         linear-gradient(
-            135deg,
-            rgba(52, 83, 59, .64),
-            rgba(16, 29, 20, .72)
+            145deg,
+            rgba(255, 255, 255, .105),
+            rgba(255, 255, 255, .025) 38%,
+            rgba(16, 54, 30, .35) 100%
         );
 
-    border: 1px solid rgba(193, 219, 188, .19);
-    border-radius: 28px;
+    border: 1px solid rgba(220, 255, 226, .19);
 
-    padding: 25px;
-
-    margin-top: 12px;
-
-    backdrop-filter: blur(28px) saturate(170%);
-    -webkit-backdrop-filter: blur(28px) saturate(170%);
+    backdrop-filter: blur(30px) saturate(190%);
+    -webkit-backdrop-filter: blur(30px) saturate(190%);
 
     box-shadow:
-        0 20px 60px rgba(0,0,0,.24),
-        inset 0 1px 1px rgba(255,255,255,.13);
+        0 18px 48px rgba(0, 0, 0, .38),
+        0 0 25px rgba(30, 130, 66, .09),
+        inset 0 1px 0 rgba(255, 255, 255, .23),
+        inset 0 -1px 0 rgba(255, 255, 255, .06);
+
+    transition:
+        transform .3s ease,
+        border-color .3s ease,
+        box-shadow .3s ease,
+        background .3s ease;
+}
+
+/* LIGHT REFLECTION */
+
+.panel::after,
+.hero::after,
+.prayer-card::after,
+.zikr-card::after,
+.quick-grid button::after {
+    content: "";
+
+    position: absolute;
+    top: -100%;
+    left: -65%;
+
+    width: 45%;
+    height: 300%;
+
+    pointer-events: none;
+
+    transform: rotate(28deg);
+
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, .055),
+        rgba(255, 255, 255, .19),
+        rgba(255, 255, 255, .055),
+        transparent
+    );
+
+    opacity: .65;
+
+    animation: glassReflection 9s ease-in-out infinite;
+}
+
+@keyframes glassReflection {
+    0%, 65% {
+        left: -75%;
+    }
+
+    85%, 100% {
+        left: 145%;
+    }
+}
+
+/* GOLDEN EDGE LIGHT */
+
+.hero,
+.panel {
+    border-color: rgba(208, 236, 204, .24);
+}
+
+.hero {
+    background:
+        radial-gradient(
+            circle at 85% 10%,
+            rgba(218, 185, 110, .17),
+            transparent 35%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(37, 111, 61, .42),
+            rgba(255, 255, 255, .055) 48%,
+            rgba(5, 25, 13, .78)
+        );
+
+    box-shadow:
+        0 22px 65px rgba(0, 0, 0, .45),
+        0 0 35px rgba(39, 155, 77, .14),
+        inset 0 1px 0 rgba(255, 255, 255, .32),
+        inset 0 0 35px rgba(255, 255, 255, .025);
 }
 
 .hero::before {
-    content: "";
-
-    position: absolute;
-    top: -110px;
-    left: -90px;
-
-    width: 240px;
-    height: 240px;
-
-    background: rgba(201,173,120,.12);
-    filter: blur(70px);
-
-    pointer-events: none;
+    background: rgba(75, 211, 117, .19);
+    filter: blur(75px);
 }
 
-.hero::after {
-    content: "";
-
-    position: absolute;
-    inset: 0;
-
-    border-radius: inherit;
-
-    background:
-        linear-gradient(
-            115deg,
-            rgba(255,255,255,.07),
-            transparent 35%
-        );
-
-    pointer-events: none;
-}
+/* HERO TEXT */
 
 .hero h1 {
-    position: relative;
-    z-index: 1;
-
-    font-size: clamp(38px, 9vw, 55px);
-    font-weight: 550;
-
-    margin: 12px 0;
-
-    direction: ltr;
-    text-align: right;
-
-    font-variant-numeric: tabular-nums;
-    letter-spacing: -1px;
-}
-
-.hero p {
-    position: relative;
-    z-index: 1;
-
-    color: var(--muted);
-    font-size: 13px;
-}
-
-.next-prayer {
-    position: relative;
-    z-index: 1;
-
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 12px;
-
-    border-top: 1px solid rgba(255,255,255,.13);
-
-    padding-top: 18px;
-    margin-top: 20px;
-}
-
-.next-prayer h2 {
-    margin: 7px 0;
-    font-size: 23px;
+    color: #fffdf4;
+    text-shadow:
+        0 0 18px rgba(255, 255, 255, .12),
+        0 0 35px rgba(75, 183, 101, .16);
 }
 
 #countdown {
-    color: var(--gold2);
+    color: var(--gold-light);
 
-    font-size: clamp(19px, 5vw, 25px);
-    font-weight: 600;
-
-    direction: ltr;
-    font-variant-numeric: tabular-nums;
-
-    text-shadow: 0 0 22px rgba(215,189,140,.2);
+    text-shadow:
+        0 0 8px rgba(255, 226, 153, .48),
+        0 0 24px rgba(215, 177, 93, .30);
 }
 
-/* =========================================
-   BUTTONS
-   ========================================= */
+/* LOGO */
 
-.outline-btn {
-    background: rgba(255,255,255,.045);
-
-    color: var(--gold2);
-
-    border: 1px solid var(--border-gold);
-    border-radius: 13px;
-
-    padding: 11px 16px;
-    margin-top: 10px;
-
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-
-    transition: .25s;
-}
-
-.outline-btn:hover {
-    background: rgba(201,173,120,.13);
-    transform: translateY(-2px);
-}
-
-.primary-btn {
-    width: 100%;
+.logo {
+    border: 1px solid rgba(255, 224, 157, .65);
 
     background:
         linear-gradient(
-            135deg,
-            rgba(66,105,73,.85),
-            rgba(37,65,43,.85)
+            145deg,
+            rgba(255, 255, 255, .28),
+            rgba(38, 102, 56, .45),
+            rgba(9, 28, 16, .8)
         );
 
-    color: white;
-
-    border: 1px solid rgba(176,211,174,.27);
-    border-radius: 15px;
-
-    padding: 14px;
-
-    margin-top: 12px;
-
     box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.13),
-        0 8px 25px rgba(0,0,0,.15);
-
-    transition: .25s;
+        0 0 18px rgba(219, 181, 97, .20),
+        0 0 35px rgba(48, 155, 78, .19),
+        inset 0 1px 2px rgba(255, 255, 255, .4),
+        inset 0 -5px 15px rgba(0, 0, 0, .2);
 }
 
-.primary-btn:hover {
-    filter: brightness(1.15);
-    transform: translateY(-2px);
-}
-
-/* =========================================
-   SECTIONS
-   ========================================= */
-
-.section {
-    margin: 27px 0;
-}
-
-.section h3,
-.panel h3 {
-    font-size: 17px;
-    font-weight: 650;
-    margin-top: 0;
-}
-
-/* =========================================
-   PRAYER CARDS
-   ========================================= */
-
-.prayer-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-}
+/* PRAYER CARDS */
 
 .prayer-card {
-    position: relative;
-    overflow: hidden;
-
-    text-align: center;
-
-    background: var(--glass);
-    border: 1px solid var(--border);
-
-    border-radius: 18px;
-
-    padding: 16px 5px;
-
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.06),
-        0 8px 25px rgba(0,0,0,.12);
-
-    transition: .3s;
+    border-radius: 20px;
 }
 
 .prayer-card:hover {
-    transform: translateY(-3px);
-    background: var(--glass-strong);
+    transform: translateY(-5px);
+
+    border-color: rgba(225, 255, 228, .48);
+
+    box-shadow:
+        0 15px 35px rgba(0, 0, 0, .35),
+        0 0 25px rgba(53, 184, 91, .17),
+        inset 0 1px 0 rgba(255, 255, 255, .3);
 }
 
 .prayer-card.active {
-    border-color: var(--border-gold);
-
     background:
         linear-gradient(
             145deg,
-            rgba(201,173,120,.15),
-            rgba(255,255,255,.045)
+            rgba(215, 185, 110, .22),
+            rgba(36, 107, 57, .40),
+            rgba(255, 255, 255, .045)
         );
 
+    border-color: rgba(255, 224, 157, .72);
+
     box-shadow:
-        0 0 25px rgba(201,173,120,.09),
-        inset 0 1px 1px rgba(255,255,255,.12);
+        0 0 25px rgba(215, 185, 110, .15),
+        0 0 35px rgba(42, 156, 75, .15),
+        inset 0 1px 0 rgba(255, 255, 255, .3);
 }
 
-.prayer-card small {
-    display: block;
-    color: var(--muted);
-    font-size: 12px;
-}
-
-.prayer-card strong {
-    display: block;
-    margin: 9px 0;
-
-    font-size: 16px;
-    font-weight: 650;
-}
-
-.prayer-card em {
-    color: var(--green);
-    font-size: 10px;
-    font-style: normal;
-}
-
-/* =========================================
-   GLASS PANELS
-   ========================================= */
+/* PANELS */
 
 .panel {
+    border-radius: 25px;
+}
+
+.panel h3,
+.section h3 {
+    color: #f5f4e9;
+}
+
+/* BUTTONS */
+
+.primary-btn,
+.count-btn {
     position: relative;
     overflow: hidden;
 
     background:
         linear-gradient(
-            145deg,
-            rgba(255,255,255,.075),
-            rgba(255,255,255,.025)
+            120deg,
+            rgba(40, 139, 69, .85),
+            rgba(17, 77, 38, .9) 48%,
+            rgba(190, 151, 74, .48)
         );
 
-    border: 1px solid var(--border);
-    border-radius: 24px;
-
-    padding: 19px;
-
-    margin: 18px 0;
-
-    backdrop-filter: blur(25px) saturate(160%);
-    -webkit-backdrop-filter: blur(25px) saturate(160%);
+    border: 1px solid rgba(210, 244, 199, .38);
 
     box-shadow:
-        var(--shadow),
-        inset 0 1px 1px rgba(255,255,255,.09);
+        0 8px 24px rgba(0, 0, 0, .28),
+        0 0 22px rgba(47, 168, 81, .17),
+        inset 0 1px 0 rgba(255, 255, 255, .35);
+
+    transition: .25s ease;
 }
 
-.panel h3 {
-    margin-bottom: 17px;
+.primary-btn:hover,
+.count-btn:hover {
+    transform: translateY(-2px);
+
+    filter: brightness(1.2);
+
+    box-shadow:
+        0 10px 30px rgba(0, 0, 0, .35),
+        0 0 30px rgba(67, 193, 101, .28),
+        inset 0 1px 0 rgba(255, 255, 255, .45);
 }
 
-.quick-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 11px;
+.outline-btn {
+    border-color: rgba(255, 221, 150, .5);
+
+    box-shadow:
+        0 0 16px rgba(215, 185, 110, .09),
+        inset 0 1px 0 rgba(255, 255, 255, .17);
 }
+
+/* QUICK BUTTONS */
 
 .quick-grid button {
-    min-height: 85px;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(255,255,255,.085),
-            rgba(255,255,255,.025)
-        );
-
-    border: 1px solid var(--border);
-    border-radius: 17px;
-
-    color: var(--gold2);
-    font-size: 25px;
-
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-
-    transition: .25s;
+    border-radius: 21px;
+    color: var(--gold-light);
 }
 
 .quick-grid button:hover {
-    background: rgba(201,173,120,.11);
-    border-color: var(--border-gold);
-    transform: translateY(-3px);
+    transform: translateY(-4px);
+
+    border-color: rgba(255, 225, 161, .48);
+
+    box-shadow:
+        0 12px 32px rgba(0, 0, 0, .3),
+        0 0 24px rgba(49, 165, 82, .19),
+        inset 0 1px 0 rgba(255, 255, 255, .35);
 }
 
-.quick-grid button span {
-    display: block;
-
-    color: var(--text);
-    font-size: 13px;
-
-    margin-top: 7px;
-}
-
-/* =========================================
-   DAILY VERSE
-   ========================================= */
-
-.daily-verse {
-    font-family: "Amiri Quran", serif;
-
-    font-size: 26px;
-    line-height: 2.1;
-
-    text-align: center;
-    color: #f3e9d6;
-}
-
-.muted {
-    color: var(--muted);
-    font-size: 13px;
-}
-
-/* =========================================
-   TABS
-   ========================================= */
-
-.tabs {
-    display: flex;
-    gap: 9px;
-    margin: 16px 0;
-}
+/* TABS */
 
 .tabs button {
-    flex: 1;
-
-    padding: 13px;
-
-    background: var(--glass);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-
-    color: var(--muted);
-
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-
-    transition: .25s;
+    border-radius: 15px;
 }
 
-.tabs button:hover,
-.tabs button.active {
-    color: var(--gold2);
-    border-color: var(--border-gold);
-    background: rgba(201,173,120,.1);
+.tabs button:focus,
+.tabs button:active {
+    color: var(--gold-light);
+    border-color: rgba(255, 222, 155, .6);
+    background: rgba(191, 151, 75, .16);
 }
 
-/* =========================================
-   SEARCH
-   ========================================= */
+/* SEARCH */
 
 .search {
-    width: 100%;
-
-    padding: 15px 17px;
-
-    background: rgba(255,255,255,.055);
-    color: white;
-
-    border: 1px solid var(--border);
-    border-radius: 15px;
-
-    margin-bottom: 16px;
-
-    outline: none;
-
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-
-    transition: .25s;
+    background: rgba(9, 29, 17, .55);
 }
 
 .search:focus {
-    border-color: var(--border-gold);
-    background: rgba(255,255,255,.09);
+    border-color: rgba(255, 220, 151, .7);
+
+    box-shadow:
+        0 0 0 3px rgba(215, 185, 110, .10),
+        0 0 22px rgba(48, 157, 79, .16);
 }
 
-.search::placeholder {
-    color: #849087;
-}
-
-/* =========================================
-   QURAN LISTS
-   ========================================= */
-
-#surahList,
-#juzList {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-}
-
-#surahList button,
-#juzList button {
-    background: var(--glass);
-
-    border: 1px solid var(--border);
-    border-radius: 15px;
-
-    padding: 15px 12px;
-
-    text-align: right;
-
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-
-    transition: .25s;
-}
-
-#surahList button:hover,
-#juzList button:hover {
-    border-color: var(--border-gold);
-    background: rgba(201,173,120,.09);
-    transform: translateY(-2px);
-}
-
-#surahList small,
-#juzList small {
-    display: block;
-
-    color: var(--muted);
-    font-size: 11px;
-
-    margin-top: 7px;
-}
-
-/* =========================================
-   QURAN READER
-   ========================================= */
-
-.reader-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    gap: 10px;
-
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 15px;
-}
-
-.reader-header h2 {
-    color: var(--gold2);
-    margin: 0;
-}
-
-.quran-text,
-.quran-text span,
-.quran-basmala {
-    font-family: "Amiri Quran", "Amiri", serif !important;
-}
+/* QURAN */
 
 .quran-text {
-    font-size: 28px;
-    line-height: 2.65;
-
-    text-align: justify;
-    text-align-last: center;
-
-    direction: rtl;
-
-    color: #f2e9d9;
-
-    padding: 18px 3px;
-
-    word-spacing: 2px;
+    color: #f7f0df;
+    text-shadow: 0 0 15px rgba(255, 255, 255, .035);
 }
 
 .quran-basmala {
-    text-align: center;
-
-    font-size: 31px;
-    line-height: 2.3;
-
-    color: var(--gold2);
-
-    padding: 20px 7px;
-
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 16px;
+    color: var(--gold-light);
+    text-shadow:
+        0 0 12px rgba(255, 221, 151, .22),
+        0 0 28px rgba(215, 185, 110, .12);
 }
 
-.ayah {
-    display: inline;
-}
+/* AYAH MARK */
 
 .ayah-mark {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 
-    color: var(--gold2);
+    position: relative;
 
-    font-size: 19px;
+    min-width: 2.5em;
+    width: auto;
+    height: 2.5em;
+
+    padding: 0 .35em;
+    margin: 0 .12em;
+
+    border: 1px solid rgba(255, 222, 151, .68);
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle at 30% 20%,
+            rgba(255, 255, 255, .20),
+            transparent 55%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(193, 155, 78, .22),
+            rgba(21, 69, 37, .48)
+        );
+
+    color: var(--gold-light);
+
+    font-size: .78em;
+    line-height: 1;
+
     white-space: nowrap;
-
-    margin: 0 5px;
-
-    line-height: 1.5;
+    direction: rtl;
     vertical-align: middle;
+
+    box-shadow:
+        0 0 10px rgba(215, 185, 110, .17),
+        0 0 18px rgba(36, 143, 70, .12),
+        inset 0 1px 2px rgba(255, 255, 255, .28);
 }
 
-.quran-source {
-    color: var(--muted);
+.ayah-number {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: .48em;
+    line-height: 1;
+
+    color: #fff0c4;
+    white-space: nowrap;
 }
 
-/* =========================================
-   AZKAR
-   ========================================= */
+/* ADHKAR */
 
 .zikr-card {
-    position: relative;
-    overflow: hidden;
+    border-radius: 23px;
 
     background:
         linear-gradient(
             145deg,
-            rgba(255,255,255,.075),
-            rgba(255,255,255,.025)
+            rgba(255, 255, 255, .09),
+            rgba(19, 61, 33, .36),
+            rgba(5, 20, 11, .65)
         );
-
-    border: 1px solid var(--border);
-    border-radius: 20px;
-
-    padding: 20px;
-
-    margin: 14px 0;
-
-    backdrop-filter: blur(22px) saturate(150%);
-    -webkit-backdrop-filter: blur(22px) saturate(150%);
-
-    box-shadow:
-        inset 0 1px 1px rgba(255,255,255,.08),
-        0 10px 30px rgba(0,0,0,.16);
 }
 
 .zikr-text {
-    font-family: "Amiri Quran", "Amiri", serif;
-
-    font-size: 24px;
-    line-height: 2.1;
-
-    text-align: center;
-    color: #f3eadb;
+    color: #f5f0e3;
 }
 
-.count-btn {
-    width: 100%;
+/* QIBLA */
+
+.qibla-icon {
+    color: var(--gold-light);
+
+    filter:
+        drop-shadow(0 0 10px rgba(255, 220, 151, .38))
+        drop-shadow(0 0 25px rgba(49, 158, 80, .25));
+}
+
+/* PROGRESS */
+
+.progress {
+    background: rgba(255, 255, 255, .09);
+
+    box-shadow:
+        inset 0 2px 5px rgba(0, 0, 0, .3),
+        0 0 10px rgba(47, 148, 76, .08);
+}
+
+.progress span {
+    background:
+        linear-gradient(
+            90deg,
+            #247b42,
+            #8bd69a,
+            #ffe4a0
+        );
+
+    box-shadow:
+        0 0 10px rgba(121, 218, 142, .35),
+        0 0 18px rgba(255, 224, 157, .15);
+}
+
+/* TRACKER & SETTINGS */
+
+.tracker-row,
+.setting-row,
+.iqama-setting {
+    border-color: rgba(255, 255, 255, .10);
+}
+
+input[type="checkbox"] {
+    accent-color: #d8b96e;
+}
+
+/* BOTTOM NAV — FLOATING GLASS */
+
+.bottom-nav {
+    left: 12px;
+    right: 12px;
+    bottom: max(12px, env(safe-area-inset-bottom));
+
+    border: 1px solid rgba(222, 255, 227, .24);
+    border-radius: 23px;
 
     background:
         linear-gradient(
             135deg,
-            rgba(55,92,63,.85),
-            rgba(30,56,37,.85)
+            rgba(255, 255, 255, .13),
+            rgba(16, 55, 29, .74) 45%,
+            rgba(5, 20, 11, .87)
         );
 
-    border: 1px solid rgba(174,211,174,.28);
-    border-radius: 14px;
-
-    padding: 15px;
-
-    margin-top: 14px;
-
-    color: white;
-
-    transition: .25s;
-}
-
-.count-btn:hover {
-    filter: brightness(1.18);
-}
-
-.count-btn:disabled {
-    opacity: .6;
-    cursor: default;
-    background: rgba(201,173,120,.15);
-    border-color: var(--border-gold);
-}
-
-/* =========================================
-   QIBLA
-   ========================================= */
-
-.center {
-    text-align: center;
-}
-
-.qibla-icon {
-    color: var(--gold2);
-    font-size: 80px;
-
-    filter: drop-shadow(0 0 20px rgba(201,173,120,.18));
-}
-
-/* =========================================
-   PROGRESS
-   ========================================= */
-
-.progress {
-    height: 9px;
-
-    background: rgba(255,255,255,.08);
-
-    border-radius: 30px;
-    overflow: hidden;
-
-    margin: 17px 0;
-}
-
-.progress span {
-    display: block;
-
-    height: 100%;
-    width: 0;
-
-    background:
-        linear-gradient(
-            90deg,
-            #789d79,
-            var(--gold2)
-        );
-
-    border-radius: inherit;
-
-    box-shadow: 0 0 14px rgba(201,173,120,.25);
-
-    transition: width .4s ease;
-}
-
-/* =========================================
-   TRACKER & SETTINGS
-   ========================================= */
-
-.tracker-row,
-.setting-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    gap: 12px;
-
-    padding: 15px 3px;
-
-    border-bottom: 1px solid rgba(255,255,255,.09);
-}
-
-input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-
-    accent-color: var(--gold);
-
-    cursor: pointer;
-}
-
-.iqama-setting {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    gap: 10px;
-
-    padding: 13px 0;
-
-    border-bottom: 1px solid rgba(255,255,255,.09);
-}
-
-.iqama-setting input {
-    width: 115px;
-
-    padding: 10px;
-
-    background: rgba(0,0,0,.22);
-    color: white;
-
-    border: 1px solid var(--border);
-    border-radius: 11px;
-
-    text-align: center;
-}
-
-/* =========================================
-   BOTTOM NAVIGATION
-   ========================================= */
-
-.bottom-nav {
-    position: fixed;
-    z-index: 100;
-
-    bottom: 12px;
-    left: 50%;
-
-    transform: translateX(-50%);
-
-    width: min(94%, 660px);
-
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-
-    background: rgba(13, 20, 15, .76);
-
-    border: 1px solid rgba(255,255,255,.13);
-    border-radius: 23px;
-
-    padding: 11px 5px;
-
-    backdrop-filter: blur(32px) saturate(190%);
-    -webkit-backdrop-filter: blur(32px) saturate(190%);
+    backdrop-filter: blur(35px) saturate(200%);
+    -webkit-backdrop-filter: blur(35px) saturate(200%);
 
     box-shadow:
-        0 15px 45px rgba(0,0,0,.42),
-        inset 0 1px 1px rgba(255,255,255,.12);
+        0 12px 40px rgba(0, 0, 0, .5),
+        0 0 25px rgba(37, 139, 69, .13),
+        inset 0 1px 0 rgba(255, 255, 255, .27),
+        inset 0 -1px 0 rgba(255, 255, 255, .05);
+
+    padding:
+        10px 5px
+        calc(10px + env(safe-area-inset-bottom));
 }
 
 .nav-item {
-    background: none;
-    border: none;
-
-    color: #89948c;
-
-    min-width: 48px;
-
-    padding: 3px 7px;
-
-    border-radius: 14px;
-
-    transition: .25s;
-}
-
-.nav-item b {
-    display: block;
-
-    font-size: 21px;
-    font-weight: normal;
-
-    margin-bottom: 3px;
-}
-
-.nav-item small {
-    font-size: 10px;
+    border-radius: 15px;
 }
 
 .nav-item.active {
-    color: var(--gold2);
+    color: var(--gold-light);
 
-    background: rgba(201,173,120,.10);
-
-    text-shadow: 0 0 15px rgba(201,173,120,.25);
+    text-shadow:
+        0 0 12px rgba(255, 221, 151, .3);
 }
 
-/* =========================================
-   SCROLLBAR
-   ========================================= */
-
-::-webkit-scrollbar {
-    width: 6px;
+.nav-item.active b {
+    text-shadow:
+        0 0 12px rgba(255, 221, 151, .5),
+        0 0 25px rgba(215, 185, 110, .25);
 }
 
-::-webkit-scrollbar-track {
-    background: transparent;
-}
+/* SCROLLBAR */
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(201,173,120,.25);
-    border-radius: 20px;
+    background:
+        linear-gradient(
+            180deg,
+            rgba(135, 206, 148, .55),
+            rgba(215, 185, 110, .5)
+        );
 }
 
-/* =========================================
-   RESPONSIVE — DESKTOP
-   ========================================= */
+/* INTERACTION */
 
-@media (min-width: 650px) {
-    .quick-grid {
-        grid-template-columns: repeat(4, 1fr);
-    }
-
-    .prayer-grid {
-        grid-template-columns: repeat(6, 1fr);
-    }
-
-    .page {
-        width: min(100% - 50px, 760px);
-    }
-
-    .hero {
-        padding: 32px;
-    }
+button:focus-visible,
+input:focus-visible {
+    outline: 2px solid rgba(255, 222, 151, .7);
+    outline-offset: 3px;
 }
 
-/* =========================================
-   RESPONSIVE — MOBILE
-   ========================================= */
+button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* MOBILE */
 
 @media (max-width: 600px) {
+
     body {
-        padding-bottom: 110px;
-    }
-
-    .topbar {
-        height: 73px;
-    }
-
-    .hero {
-        padding: 21px;
-        border-radius: 24px;
-    }
-
-    .quran-text {
-        font-size: 25px;
-        line-height: 2.5;
-    }
-
-    .quran-basmala {
-        font-size: 27px;
-    }
-
-    .zikr-text {
-        font-size: 22px;
-    }
-
-    .panel {
-        padding: 17px;
+        padding-bottom: 115px;
     }
 
     .bottom-nav {
-        bottom: 9px;
+        left: 9px;
+        right: 9px;
+        bottom: max(9px, env(safe-area-inset-bottom));
+
+        border-radius: 21px;
+    }
+
+    .quran-text {
+        font-size: 23px;
+        line-height: 2.45;
+
+        text-align: justify;
+        overflow-wrap: normal;
+        word-break: normal;
+    }
+
+    .ayah-mark {
+        min-width: 2.35em;
+        height: 2.35em;
+
+        padding: 0 .25em;
+        margin: 0 .08em;
+
+        font-size: .76em;
+
+        vertical-align: middle;
+    }
+
+    .ayah-number {
+        font-size: .47em;
+    }
+
+    .hero {
+        box-shadow:
+            0 15px 40px rgba(0, 0, 0, .42),
+            0 0 25px rgba(38, 144, 69, .14),
+            inset 0 1px 0 rgba(255, 255, 255, .28);
     }
 }
 
-@media (max-width: 370px) {
-    .nav-item {
-        min-width: 40px;
-        padding: 3px;
-    }
+/* DESKTOP */
 
-    .nav-item small {
-        font-size: 9px;
-    }
-
-    .prayer-grid {
-        gap: 6px;
-    }
-
-    .prayer-card {
-        padding: 13px 3px;
-    }
-
-    .prayer-card strong {
-        font-size: 14px;
+@media (min-width: 650px) {
+    .bottom-nav {
+        max-width: 680px;
+        left: 50%;
+        right: auto;
+        width: calc(100% - 40px);
+        transform: translateX(-50%);
     }
 }
 
-/* =========================================
-   REDUCED MOTION
-   ========================================= */
+/* REDUCED MOTION */
 
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
     *::after {
+        animation: none !important;
+        transition: none !important;
         scroll-behavior: auto !important;
-        animation-duration: .01ms !important;
-        transition-duration: .01ms !important;
-    }
-}
-
-/* =========================================
-   SAFARI / IPHONE SAFE AREA
-   ========================================= */
-
-@supports (padding: env(safe-area-inset-bottom)) {
-    .bottom-nav {
-        bottom: calc(9px + env(safe-area-inset-bottom));
-    }
-
-    body {
-        padding-bottom: calc(115px + env(safe-area-inset-bottom));
     }
 }
