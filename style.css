@@ -1,0 +1,460 @@
+
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: #080b09;
+    --card: rgba(22, 32, 25, .88);
+    --card2: #19251d;
+    --border: #304034;
+    --gold: #c9ad78;
+    --text: #f5f3eb;
+    --muted: #9aa69c;
+    --green: #a9c3aa;
+}
+
+body {
+    margin: 0;
+    background: radial-gradient(ellipse at top, #1b3022, transparent 55%), var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    padding-bottom: 100px;
+}
+
+button, input {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+    color: inherit;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+.topbar {
+    max-width: 760px;
+    margin: auto;
+    height: 78px;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand h2 {
+    margin: 0;
+    font-size: 19px;
+}
+
+.brand small {
+    color: var(--muted);
+    letter-spacing: 3px;
+}
+
+.logo {
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--gold);
+    border-radius: 14px;
+    display: grid;
+    place-items: center;
+    color: var(--gold);
+    font-size: 25px;
+}
+
+.icon-btn {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    border-radius: 12px;
+}
+
+.page {
+    display: none;
+    width: min(100% - 30px, 700px);
+    margin: auto;
+}
+
+.page.active {
+    display: block;
+}
+
+.hero {
+    background: linear-gradient(145deg, #20372a, #101713);
+    border: 1px solid #3a5140;
+    border-radius: 24px;
+    padding: 23px;
+    margin-top: 12px;
+}
+
+.hero h1 {
+    font-size: clamp(38px, 9vw, 55px);
+    margin: 12px 0;
+    direction: ltr;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.hero p {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.next-prayer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid #ffffff20;
+    padding-top: 18px;
+    margin-top: 20px;
+}
+
+.next-prayer h2 {
+    margin: 7px 0;
+}
+
+#countdown {
+    color: var(--gold);
+    font-size: 22px;
+    direction: ltr;
+}
+
+.outline-btn {
+    background: transparent;
+    color: var(--gold);
+    border: 1px solid var(--border);
+    padding: 10px 15px;
+    border-radius: 11px;
+    margin-top: 10px;
+}
+
+.primary-btn {
+    width: 100%;
+    background: #293e30;
+    color: white;
+    border: 1px solid #526c56;
+    padding: 13px;
+    border-radius: 12px;
+    margin-top: 12px;
+}
+
+.section {
+    margin: 25px 0;
+}
+
+.section h3, .panel h3 {
+    font-size: 17px;
+    margin-top: 0;
+}
+
+.prayer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 9px;
+}
+
+.prayer-card {
+    text-align: center;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    padding: 14px 5px;
+}
+
+.prayer-card.active {
+    border-color: var(--gold);
+    background: #203326;
+}
+
+.prayer-card small {
+    display: block;
+    color: var(--muted);
+}
+
+.prayer-card strong {
+    display: block;
+    margin: 8px 0;
+    font-size: 16px;
+}
+
+.prayer-card em {
+    color: var(--green);
+    font-size: 10px;
+    font-style: normal;
+}
+
+.panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 21px;
+    padding: 18px;
+    margin: 17px 0;
+    box-shadow: 0 12px 35px #0002;
+}
+
+.quick-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.quick-grid button {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 15px;
+    min-height: 78px;
+    font-size: 23px;
+    color: var(--gold);
+}
+
+.quick-grid button span {
+    display: block;
+    color: var(--text);
+    font-size: 13px;
+    margin-top: 7px;
+}
+
+.daily-verse {
+    font-size: 25px;
+    line-height: 2;
+    text-align: center;
+}
+
+.muted {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.tabs {
+    display: flex;
+    gap: 9px;
+    margin: 15px 0;
+}
+
+.tabs button {
+    flex: 1;
+    padding: 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+.search {
+    width: 100%;
+    padding: 14px;
+    background: var(--card);
+    color: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 15px;
+    outline: none;
+}
+
+#surahList, #juzList {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 9px;
+}
+
+#surahList button, #juzList button {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 13px;
+    padding: 14px 10px;
+    text-align: right;
+}
+
+#surahList small, #juzList small {
+    display: block;
+    color: var(--muted);
+    margin-top: 6px;
+}
+
+.reader-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+}
+
+.reader-header h2 {
+    color: var(--gold);
+    margin: 0;
+}
+
+.quran-text, .quran-text span, .quran-basmala {
+    font-family: "Amiri Quran", serif !important;
+}
+
+.quran-text {
+    font-size: 27px;
+    line-height: 2.7;
+    text-align: justify;
+    direction: rtl;
+    color: #f1e8d5;
+    padding: 15px 2px;
+}
+
+.quran-basmala {
+    text-align: center;
+    font-size: 30px;
+    line-height: 2.3;
+    color: var(--gold);
+    padding: 20px 5px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 15px;
+}
+
+.ayah-mark {
+    color: var(--gold);
+    font-size: 17px;
+    white-space: nowrap;
+    margin: 0 4px;
+}
+
+.zikr-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 17px;
+    padding: 17px;
+    margin: 12px 0;
+}
+
+.zikr-text {
+    font-size: 21px;
+    line-height: 2.2;
+}
+
+.count-btn {
+    width: 100%;
+    background: #263d2e;
+    border: 1px solid #526c56;
+    border-radius: 12px;
+    padding: 13px;
+    margin-top: 13px;
+}
+
+.center {
+    text-align: center;
+}
+
+.qibla-icon {
+    color: var(--gold);
+    font-size: 75px;
+}
+
+.progress {
+    height: 8px;
+    background: #27352b;
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 15px 0;
+}
+
+.progress span {
+    display: block;
+    height: 100%;
+    width: 0;
+    background: var(--gold);
+    transition: .3s;
+}
+
+.tracker-row, .setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 3px;
+    border-bottom: 1px solid var(--border);
+}
+
+input[type="checkbox"] {
+    width: 19px;
+    height: 19px;
+    accent-color: var(--gold);
+}
+
+.iqama-setting {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.iqama-setting input {
+    width: 100px;
+    padding: 9px;
+    background: #080d0a;
+    color: white;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    text-align: center;
+}
+
+.bottom-nav {
+    position: fixed;
+    z-index: 10;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-around;
+    background: #0b100ef5;
+    border-top: 1px solid var(--border);
+    padding: 10px 3px calc(10px + env(safe-area-inset-bottom));
+    backdrop-filter: blur(20px);
+}
+
+.nav-item {
+    background: none;
+    border: none;
+    color: var(--muted);
+    min-width: 50px;
+}
+
+.nav-item b {
+    display: block;
+    font-size: 22px;
+    font-weight: normal;
+}
+
+.nav-item small {
+    font-size: 10px;
+}
+
+.nav-item.active {
+    color: var(--gold);
+}
+
+@media (min-width: 650px) {
+    .quick-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .prayer-grid {
+        grid-template-columns: repeat(6, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .quran-text {
+        font-size: 23px;
+        line-height: 2.5;
+    }
+
+    .quran-basmala {
+        font-size: 26px;
+    }
+}
