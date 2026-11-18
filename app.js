@@ -142,6 +142,8 @@ async function loadPrayer() {
         renderPrayers();
         updateCountdown();
 
+        startAlerts();
+
     } catch (error) {
         console.error(error);
 
@@ -252,6 +254,67 @@ function updateCountdown() {
     $("prayer-" + upcoming.key)?.classList.add("active");
 
     checkAlerts();
+}
+
+// ======================================
+// صوت الأذان - علي ملا
+// ======================================
+
+const adhanAudio = new Audio("./audio/adhan.mp3");
+
+adhanAudio.preload = "auto";
+adhanAudio.volume = 1;
+
+let adhanUnlocked = false;
+
+async function playAdhan() {
+    if (!$("adhanSound")?.checked) return;
+
+    try {
+        adhanAudio.pause();
+        adhanAudio.currentTime = 0;
+
+        await adhanAudio.play();
+
+        adhanUnlocked = true;
+
+        if ($("notificationStatus")) {
+            $("notificationStatus").textContent =
+                "يعمل صوت الأذان.";
+        }
+
+    } catch (error) {
+        console.warn("تعذر تشغيل الأذان:", error);
+
+        if ($("notificationStatus")) {
+            $("notificationStatus").textContent =
+                "اضغط تجربة صوت الأذان أولاً للسماح بتشغيله.";
+        }
+    }
+}
+
+async function testAdhanSound() {
+    try {
+        adhanAudio.pause();
+        adhanAudio.currentTime = 0;
+
+        await adhanAudio.play();
+
+        adhanUnlocked = true;
+
+        if ($("notificationStatus")) {
+            $("notificationStatus").textContent =
+                "تم تشغيل صوت الأذان بنجاح.";
+        }
+
+    } catch (error) {
+        console.error("Adhan playback error:", error);
+
+        if ($("notificationStatus")) {
+            $("notificationStatus").textContent =
+                "تعذر تشغيل الأذان. تأكد من وجود الملف audio/adhan.mp3.";
+        }
+    }
 }
 
 // ======================================
@@ -513,16 +576,13 @@ function loadQuranText(title, ayahs, surahNumber = null) {
     reader.hidden = false;
     titleBox.textContent = title;
 
-    // إخفاء البسملة القديمة قبل فتح أي سورة
     basmalaBox.hidden = true;
     basmalaBox.textContent = "";
 
-    // البحث عن البسملة المنفصلة ذات الرقم صفر
     const separateBasmala = ayahs.find(
         ayah => Number(ayah.number) === 0
     );
 
-    // استبعاد جميع العناصر التي رقمها صفر من نص الآيات
     let displayAyahs = ayahs.filter(
         ayah => Number(ayah.number) > 0
     );
@@ -557,7 +617,6 @@ function loadQuranText(title, ayahs, surahNumber = null) {
         basmalaBox.textContent = separateBasmala.text;
     }
 
-    // عرض الآيات الأصلية دون تعديل نصها
     ayahsBox.innerHTML = renderQuranAyahs(displayAyahs);
 
     addQuranAttribution(reader);
@@ -1049,7 +1108,7 @@ function saveIqama() {
 }
 
 // ======================================
-// الإشعارات
+// الإشعارات والتنبيهات
 // ======================================
 
 function enableNotifications() {
@@ -1060,13 +1119,13 @@ function enableNotifications() {
 
     Notification.requestPermission().then(permission => {
         if (permission === "granted") {
-            alert(
-                "تم السماح بالإشعارات. ستعمل التنبيهات أثناء تشغيل التطبيق."
-            );
+            $("notificationStatus").textContent =
+                "تم السماح بالإشعارات. تعمل التنبيهات أثناء تشغيل التطبيق.";
 
             startAlerts();
         } else {
-            alert("لم يتم السماح بالإشعارات");
+            $("notificationStatus").textContent =
+                "لم يتم السماح بالإشعارات.";
         }
     });
 }
@@ -1075,10 +1134,9 @@ function checkAlerts() {
     if (!timings.Fajr) return;
 
     const now = new Date();
-
     const today = now.toDateString();
 
-    const settings = [
+    const prayers = [
         ["Fajr", "الفجر"],
         ["Dhuhr", "الظهر"],
         ["Asr", "العصر"],
@@ -1086,38 +1144,56 @@ function checkAlerts() {
         ["Isha", "العشاء"]
     ];
 
-    if ($("prayerAlerts")?.checked) {
-        settings.forEach(([key, name]) => {
-            const date = parsePrayerTime(timings[key]);
+    // تنبيهات الصلوات والأذان
+    prayers.forEach(([key, name]) => {
+        const date = parsePrayerTime(timings[key]);
 
-            if (!date) return;
+        if (!date) return;
 
-            if (Math.abs(now - date) < 30000) {
-                const alertKey = today + key;
+        if (Math.abs(now - date) >= 30000) return;
 
-                if (!lastAlerts[alertKey]) {
-                    notify("حان وقت صلاة " + name);
+        const alertKey = today + "_" + key;
 
-                    lastAlerts[alertKey] = true;
-                }
+        if (lastAlerts[alertKey]) return;
+
+        lastAlerts[alertKey] = true;
+
+        if ($("prayerAlerts")?.checked) {
+            notify("حان وقت صلاة " + name);
+        }
+
+        if ($("adhanSound")?.checked) {
+            playAdhan();
+        }
+    });
+
+    // تنبيه الشروق
+    if ($("sunriseAlert")?.checked) {
+        const sunrise = parsePrayerTime(timings.Sunrise);
+
+        if (sunrise && Math.abs(now - sunrise) < 30000) {
+            const key = today + "_Sunrise";
+
+            if (!lastAlerts[key]) {
+                notify("حان وقت الشروق");
+                lastAlerts[key] = true;
             }
-        });
+        }
     }
 
-    const hour = now.getHours();
-    const minute = now.getMinutes();
-
+    // تنبيه أذكار الصباح
     if (
-        minute === 0 &&
-        hour === 7 &&
+        now.getHours() === 7 &&
+        now.getMinutes() === 0 &&
         $("morningAlert")?.checked
     ) {
         sendDailyAlert("morning", today);
     }
 
+    // تنبيه أذكار المساء
     if (
-        minute === 0 &&
-        hour === 17 &&
+        now.getHours() === 17 &&
+        now.getMinutes() === 0 &&
         $("eveningAlert")?.checked
     ) {
         sendDailyAlert("evening", today);
@@ -1125,7 +1201,7 @@ function checkAlerts() {
 }
 
 function sendDailyAlert(type, today) {
-    const key = today + type;
+    const key = today + "_" + type;
 
     if (lastAlerts[key]) return;
 
@@ -1144,7 +1220,8 @@ function notify(message) {
         Notification.permission === "granted"
     ) {
         new Notification("سَكِينَة | SAKINAH", {
-            body: message
+            body: message,
+            icon: "./icons/icon-192.png"
         });
     }
 }
@@ -1160,6 +1237,32 @@ function startAlerts() {
     );
 
     checkAlerts();
+}
+
+// ======================================
+// حفظ خيارات التنبيهات
+// ======================================
+
+function setupAlertSettings() {
+    const alertSettings = [
+        "prayerAlerts",
+        "sunriseAlert",
+        "morningAlert",
+        "eveningAlert",
+        "adhanSound"
+    ];
+
+    alertSettings.forEach(id => {
+        const element = $(id);
+
+        if (!element) return;
+
+        element.checked = load(id, element.checked);
+
+        element.addEventListener("change", () => {
+            save(id, element.checked);
+        });
+    });
 }
 
 // ======================================
@@ -1221,27 +1324,9 @@ function initializeApp() {
 
     renderTracker();
     setupIqama();
+    setupAlertSettings();
 
     loadSurahs();
-
-    $("prayerAlerts").checked =
-        load("prayerAlerts", false);
-
-    $("morningAlert").checked =
-        load("morningAlert", false);
-
-    $("eveningAlert").checked =
-        load("eveningAlert", false);
-
-    [
-        "prayerAlerts",
-        "morningAlert",
-        "eveningAlert"
-    ].forEach(id => {
-        $(id).addEventListener("change", () => {
-            save(id, $(id).checked);
-        });
-    });
 
     coordinates = load("sakinaLocation");
 
