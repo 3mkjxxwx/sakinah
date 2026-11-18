@@ -4,24 +4,29 @@
 ========================================= */
 
 :root {
+    /* الخلفيات */
     --bg: #0a110d;
-    --bg-soft: #0e1711;
+    --bg-soft: #101813;
 
-    --green: #3b6e51;
-    --green-glow: rgba(59,110,81,.24);
+    /* الأخضر */
+    --green-card: #233326;
+    --card: #181a19;
+    --border: #2d3b32;
 
-    --gold: #d6b46a;
-    --gold-light: #ead5a0;
+    /* الذهبي - لمسات فقط */
+    --gold: #d8be82;
+    --gold-light: #e5d3a6;
+    --gold-dark: #a58b58;
 
-    --card: #121e17;
-    --container: #17261d;
-    --border: #24382c;
+    /* النصوص */
+    --text: #f2f4f3;
+    --muted: #8c9690;
 
-    --text: #f0f4f1;
-    --muted: #8ea396;
+    --glass: rgba(24, 26, 25, .88);
+    --glass-light: rgba(255,255,255,.045);
 
     --radius: 22px;
-    --shadow: 0 12px 40px rgba(0,0,0,.25);
+    --shadow: 0 12px 40px rgba(0,0,0,.28);
 }
 
 /* الخلفية */
