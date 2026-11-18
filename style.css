@@ -1,190 +1,493 @@
 
+/* =========================================
+   SAKINAH — PREMIUM GLASS UI
+   Inspired by Apple iOS & macOS
+   ========================================= */
+
 * {
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
 :root {
-    --bg: #080b09;
-    --card: rgba(22, 32, 25, .88);
-    --card2: #19251d;
-    --border: #304034;
-    --gold: #c9ad78;
-    --text: #f5f3eb;
-    --muted: #9aa69c;
-    --green: #a9c3aa;
+    color-scheme: dark;
+
+    --bg: #070b09;
+    --bg2: #101a13;
+
+    --glass: rgba(255, 255, 255, 0.055);
+    --glass-strong: rgba(255, 255, 255, 0.09);
+    --glass-light: rgba(255, 255, 255, 0.12);
+
+    --card: rgba(19, 31, 23, 0.58);
+    --card2: rgba(29, 46, 34, 0.48);
+
+    --border: rgba(255, 255, 255, 0.12);
+    --border-gold: rgba(201, 173, 120, 0.42);
+
+    --gold: #d7bd8c;
+    --gold2: #f0d9a9;
+
+    --green: #b2d0b6;
+    --green2: #6e9b78;
+
+    --text: #f5f5ef;
+    --muted: #a0aaa1;
+
+    --blur: blur(24px) saturate(180%);
+    --shadow: 0 18px 55px rgba(0, 0, 0, .28);
+
+    --radius: 22px;
+}
+
+/* =========================================
+   GLOBAL
+   ========================================= */
+
+html {
+    scroll-behavior: smooth;
+    scrollbar-color: #405746 transparent;
 }
 
 body {
     margin: 0;
-    background: radial-gradient(ellipse at top, #1b3022, transparent 55%), var(--bg);
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            ellipse at 15% 0%,
+            rgba(67, 112, 76, .24),
+            transparent 42%
+        ),
+        radial-gradient(
+            ellipse at 90% 35%,
+            rgba(201, 173, 120, .09),
+            transparent 35%
+        ),
+        radial-gradient(
+            ellipse at 50% 100%,
+            rgba(38, 80, 51, .18),
+            transparent 45%
+        ),
+        var(--bg);
+
+    background-attachment: fixed;
+
     color: var(--text);
-    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-    padding-bottom: 100px;
+
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "SF Pro Display",
+        "Segoe UI",
+        system-ui,
+        sans-serif;
+
+    padding-bottom: 115px;
+
+    overflow-x: hidden;
 }
 
-button, input {
+button,
+input {
     font: inherit;
 }
 
 button {
     cursor: pointer;
     color: inherit;
+    -webkit-appearance: none;
+}
+
+button:focus-visible,
+input:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 4px;
 }
 
 [hidden] {
     display: none !important;
 }
 
+::selection {
+    background: rgba(201, 173, 120, .35);
+    color: white;
+}
+
+/* =========================================
+   TOP BAR
+   ========================================= */
+
 .topbar {
-    max-width: 760px;
+    width: min(100% - 30px, 760px);
+    height: 82px;
+
     margin: auto;
-    height: 78px;
-    padding: 12px 20px;
+    padding: 12px 5px;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    position: relative;
+    z-index: 5;
 }
 
 .brand {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 13px;
 }
 
 .brand h2 {
     margin: 0;
-    font-size: 19px;
+    font-size: 20px;
+    font-weight: 650;
+    letter-spacing: .5px;
 }
 
 .brand small {
+    display: block;
+    margin-top: 3px;
+
     color: var(--muted);
     letter-spacing: 3px;
+    font-size: 10px;
 }
 
 .logo {
-    width: 44px;
-    height: 44px;
-    border: 1px solid var(--gold);
-    border-radius: 14px;
+    width: 46px;
+    height: 46px;
+
     display: grid;
     place-items: center;
-    color: var(--gold);
-    font-size: 25px;
+
+    border: 1px solid var(--border-gold);
+    border-radius: 16px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.13),
+            rgba(255,255,255,.025)
+        );
+
+    backdrop-filter: var(--blur);
+    -webkit-backdrop-filter: var(--blur);
+
+    color: var(--gold2);
+    font-size: 26px;
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.15),
+        0 8px 25px rgba(0,0,0,.2);
 }
 
 .icon-btn {
-    background: var(--card);
+    background: var(--glass);
     border: 1px solid var(--border);
-    padding: 10px 14px;
-    border-radius: 12px;
+
+    padding: 11px 15px;
+    border-radius: 14px;
+
+    backdrop-filter: var(--blur);
+    -webkit-backdrop-filter: var(--blur);
+
+    transition: .25s;
 }
+
+.icon-btn:hover {
+    background: var(--glass-light);
+    border-color: var(--border-gold);
+}
+
+/* =========================================
+   PAGE SYSTEM
+   ========================================= */
 
 .page {
     display: none;
+
     width: min(100% - 30px, 700px);
     margin: auto;
+
+    animation: pageEnter .4s ease;
 }
 
 .page.active {
     display: block;
 }
 
+@keyframes pageEnter {
+    from {
+        opacity: 0;
+        transform: translateY(9px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================================
+   HERO
+   ========================================= */
+
 .hero {
-    background: linear-gradient(145deg, #20372a, #101713);
-    border: 1px solid #3a5140;
-    border-radius: 24px;
-    padding: 23px;
+    position: relative;
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(52, 83, 59, .64),
+            rgba(16, 29, 20, .72)
+        );
+
+    border: 1px solid rgba(193, 219, 188, .19);
+    border-radius: 28px;
+
+    padding: 25px;
+
     margin-top: 12px;
+
+    backdrop-filter: blur(28px) saturate(170%);
+    -webkit-backdrop-filter: blur(28px) saturate(170%);
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.24),
+        inset 0 1px 1px rgba(255,255,255,.13);
+}
+
+.hero::before {
+    content: "";
+
+    position: absolute;
+    top: -110px;
+    left: -90px;
+
+    width: 240px;
+    height: 240px;
+
+    background: rgba(201,173,120,.12);
+    filter: blur(70px);
+
+    pointer-events: none;
+}
+
+.hero::after {
+    content: "";
+
+    position: absolute;
+    inset: 0;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            115deg,
+            rgba(255,255,255,.07),
+            transparent 35%
+        );
+
+    pointer-events: none;
 }
 
 .hero h1 {
+    position: relative;
+    z-index: 1;
+
     font-size: clamp(38px, 9vw, 55px);
+    font-weight: 550;
+
     margin: 12px 0;
+
     direction: ltr;
     text-align: right;
+
     font-variant-numeric: tabular-nums;
+    letter-spacing: -1px;
 }
 
 .hero p {
+    position: relative;
+    z-index: 1;
+
     color: var(--muted);
     font-size: 13px;
 }
 
 .next-prayer {
+    position: relative;
+    z-index: 1;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-top: 1px solid #ffffff20;
+
+    gap: 12px;
+
+    border-top: 1px solid rgba(255,255,255,.13);
+
     padding-top: 18px;
     margin-top: 20px;
 }
 
 .next-prayer h2 {
     margin: 7px 0;
+    font-size: 23px;
 }
 
 #countdown {
-    color: var(--gold);
-    font-size: 22px;
+    color: var(--gold2);
+
+    font-size: clamp(19px, 5vw, 25px);
+    font-weight: 600;
+
     direction: ltr;
+    font-variant-numeric: tabular-nums;
+
+    text-shadow: 0 0 22px rgba(215,189,140,.2);
 }
 
+/* =========================================
+   BUTTONS
+   ========================================= */
+
 .outline-btn {
-    background: transparent;
-    color: var(--gold);
-    border: 1px solid var(--border);
-    padding: 10px 15px;
-    border-radius: 11px;
+    background: rgba(255,255,255,.045);
+
+    color: var(--gold2);
+
+    border: 1px solid var(--border-gold);
+    border-radius: 13px;
+
+    padding: 11px 16px;
     margin-top: 10px;
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    transition: .25s;
+}
+
+.outline-btn:hover {
+    background: rgba(201,173,120,.13);
+    transform: translateY(-2px);
 }
 
 .primary-btn {
     width: 100%;
-    background: #293e30;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(66,105,73,.85),
+            rgba(37,65,43,.85)
+        );
+
     color: white;
-    border: 1px solid #526c56;
-    padding: 13px;
-    border-radius: 12px;
+
+    border: 1px solid rgba(176,211,174,.27);
+    border-radius: 15px;
+
+    padding: 14px;
+
     margin-top: 12px;
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.13),
+        0 8px 25px rgba(0,0,0,.15);
+
+    transition: .25s;
 }
+
+.primary-btn:hover {
+    filter: brightness(1.15);
+    transform: translateY(-2px);
+}
+
+/* =========================================
+   SECTIONS
+   ========================================= */
 
 .section {
-    margin: 25px 0;
+    margin: 27px 0;
 }
 
-.section h3, .panel h3 {
+.section h3,
+.panel h3 {
     font-size: 17px;
+    font-weight: 650;
     margin-top: 0;
 }
+
+/* =========================================
+   PRAYER CARDS
+   ========================================= */
 
 .prayer-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 9px;
+    gap: 10px;
 }
 
 .prayer-card {
+    position: relative;
+    overflow: hidden;
+
     text-align: center;
-    background: var(--card);
+
+    background: var(--glass);
     border: 1px solid var(--border);
-    border-radius: 15px;
-    padding: 14px 5px;
+
+    border-radius: 18px;
+
+    padding: 16px 5px;
+
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.06),
+        0 8px 25px rgba(0,0,0,.12);
+
+    transition: .3s;
+}
+
+.prayer-card:hover {
+    transform: translateY(-3px);
+    background: var(--glass-strong);
 }
 
 .prayer-card.active {
-    border-color: var(--gold);
-    background: #203326;
+    border-color: var(--border-gold);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(201,173,120,.15),
+            rgba(255,255,255,.045)
+        );
+
+    box-shadow:
+        0 0 25px rgba(201,173,120,.09),
+        inset 0 1px 1px rgba(255,255,255,.12);
 }
 
 .prayer-card small {
     display: block;
     color: var(--muted);
+    font-size: 12px;
 }
 
 .prayer-card strong {
     display: block;
-    margin: 8px 0;
+    margin: 9px 0;
+
     font-size: 16px;
+    font-weight: 650;
 }
 
 .prayer-card em {
@@ -193,41 +496,95 @@ button {
     font-style: normal;
 }
 
+/* =========================================
+   GLASS PANELS
+   ========================================= */
+
 .panel {
-    background: var(--card);
+    position: relative;
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.075),
+            rgba(255,255,255,.025)
+        );
+
     border: 1px solid var(--border);
-    border-radius: 21px;
-    padding: 18px;
-    margin: 17px 0;
-    box-shadow: 0 12px 35px #0002;
+    border-radius: 24px;
+
+    padding: 19px;
+
+    margin: 18px 0;
+
+    backdrop-filter: blur(25px) saturate(160%);
+    -webkit-backdrop-filter: blur(25px) saturate(160%);
+
+    box-shadow:
+        var(--shadow),
+        inset 0 1px 1px rgba(255,255,255,.09);
+}
+
+.panel h3 {
+    margin-bottom: 17px;
 }
 
 .quick-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 11px;
 }
 
 .quick-grid button {
-    background: var(--card2);
+    min-height: 85px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.085),
+            rgba(255,255,255,.025)
+        );
+
     border: 1px solid var(--border);
-    border-radius: 15px;
-    min-height: 78px;
-    font-size: 23px;
-    color: var(--gold);
+    border-radius: 17px;
+
+    color: var(--gold2);
+    font-size: 25px;
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    transition: .25s;
+}
+
+.quick-grid button:hover {
+    background: rgba(201,173,120,.11);
+    border-color: var(--border-gold);
+    transform: translateY(-3px);
 }
 
 .quick-grid button span {
     display: block;
+
     color: var(--text);
     font-size: 13px;
+
     margin-top: 7px;
 }
 
+/* =========================================
+   DAILY VERSE
+   ========================================= */
+
 .daily-verse {
-    font-size: 25px;
-    line-height: 2;
+    font-family: "Amiri Quran", serif;
+
+    font-size: 26px;
+    line-height: 2.1;
+
     text-align: center;
+    color: #f3e9d6;
 }
 
 .muted {
@@ -235,199 +592,428 @@ button {
     font-size: 13px;
 }
 
+/* =========================================
+   TABS
+   ========================================= */
+
 .tabs {
     display: flex;
     gap: 9px;
-    margin: 15px 0;
+    margin: 16px 0;
 }
 
 .tabs button {
     flex: 1;
-    padding: 12px;
-    background: var(--card);
+
+    padding: 13px;
+
+    background: var(--glass);
     border: 1px solid var(--border);
-    border-radius: 12px;
+    border-radius: 14px;
+
+    color: var(--muted);
+
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+
+    transition: .25s;
 }
+
+.tabs button:hover,
+.tabs button.active {
+    color: var(--gold2);
+    border-color: var(--border-gold);
+    background: rgba(201,173,120,.1);
+}
+
+/* =========================================
+   SEARCH
+   ========================================= */
 
 .search {
     width: 100%;
-    padding: 14px;
-    background: var(--card);
+
+    padding: 15px 17px;
+
+    background: rgba(255,255,255,.055);
     color: white;
+
     border: 1px solid var(--border);
-    border-radius: 12px;
-    margin-bottom: 15px;
+    border-radius: 15px;
+
+    margin-bottom: 16px;
+
     outline: none;
+
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+
+    transition: .25s;
 }
 
-#surahList, #juzList {
+.search:focus {
+    border-color: var(--border-gold);
+    background: rgba(255,255,255,.09);
+}
+
+.search::placeholder {
+    color: #849087;
+}
+
+/* =========================================
+   QURAN LISTS
+   ========================================= */
+
+#surahList,
+#juzList {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 9px;
+    gap: 10px;
 }
 
-#surahList button, #juzList button {
-    background: var(--card);
+#surahList button,
+#juzList button {
+    background: var(--glass);
+
     border: 1px solid var(--border);
-    border-radius: 13px;
-    padding: 14px 10px;
+    border-radius: 15px;
+
+    padding: 15px 12px;
+
     text-align: right;
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+
+    transition: .25s;
 }
 
-#surahList small, #juzList small {
-    display: block;
-    color: var(--muted);
-    margin-top: 6px;
+#surahList button:hover,
+#juzList button:hover {
+    border-color: var(--border-gold);
+    background: rgba(201,173,120,.09);
+    transform: translateY(-2px);
 }
+
+#surahList small,
+#juzList small {
+    display: block;
+
+    color: var(--muted);
+    font-size: 11px;
+
+    margin-top: 7px;
+}
+
+/* =========================================
+   QURAN READER
+   ========================================= */
 
 .reader-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+
     gap: 10px;
+
     border-bottom: 1px solid var(--border);
-    padding-bottom: 12px;
+    padding-bottom: 15px;
 }
 
 .reader-header h2 {
-    color: var(--gold);
+    color: var(--gold2);
     margin: 0;
 }
 
-.quran-text, .quran-text span, .quran-basmala {
-    font-family: "Amiri Quran", serif !important;
+.quran-text,
+.quran-text span,
+.quran-basmala {
+    font-family: "Amiri Quran", "Amiri", serif !important;
 }
 
 .quran-text {
-    font-size: 27px;
-    line-height: 2.7;
+    font-size: 28px;
+    line-height: 2.65;
+
     text-align: justify;
+    text-align-last: center;
+
     direction: rtl;
-    color: #f1e8d5;
-    padding: 15px 2px;
+
+    color: #f2e9d9;
+
+    padding: 18px 3px;
+
+    word-spacing: 2px;
 }
 
 .quran-basmala {
     text-align: center;
-    font-size: 30px;
+
+    font-size: 31px;
     line-height: 2.3;
-    color: var(--gold);
-    padding: 20px 5px;
+
+    color: var(--gold2);
+
+    padding: 20px 7px;
+
     border-bottom: 1px solid var(--border);
-    margin-bottom: 15px;
+    margin-bottom: 16px;
+}
+
+.ayah {
+    display: inline;
 }
 
 .ayah-mark {
-    color: var(--gold);
-    font-size: 17px;
+    display: inline-block;
+
+    color: var(--gold2);
+
+    font-size: 19px;
     white-space: nowrap;
-    margin: 0 4px;
+
+    margin: 0 5px;
+
+    line-height: 1.5;
+    vertical-align: middle;
 }
 
+.quran-source {
+    color: var(--muted);
+}
+
+/* =========================================
+   AZKAR
+   ========================================= */
+
 .zikr-card {
-    background: var(--card);
+    position: relative;
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.075),
+            rgba(255,255,255,.025)
+        );
+
     border: 1px solid var(--border);
-    border-radius: 17px;
-    padding: 17px;
-    margin: 12px 0;
+    border-radius: 20px;
+
+    padding: 20px;
+
+    margin: 14px 0;
+
+    backdrop-filter: blur(22px) saturate(150%);
+    -webkit-backdrop-filter: blur(22px) saturate(150%);
+
+    box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.08),
+        0 10px 30px rgba(0,0,0,.16);
 }
 
 .zikr-text {
-    font-size: 21px;
-    line-height: 2.2;
+    font-family: "Amiri Quran", "Amiri", serif;
+
+    font-size: 24px;
+    line-height: 2.1;
+
+    text-align: center;
+    color: #f3eadb;
 }
 
 .count-btn {
     width: 100%;
-    background: #263d2e;
-    border: 1px solid #526c56;
-    border-radius: 12px;
-    padding: 13px;
-    margin-top: 13px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(55,92,63,.85),
+            rgba(30,56,37,.85)
+        );
+
+    border: 1px solid rgba(174,211,174,.28);
+    border-radius: 14px;
+
+    padding: 15px;
+
+    margin-top: 14px;
+
+    color: white;
+
+    transition: .25s;
 }
+
+.count-btn:hover {
+    filter: brightness(1.18);
+}
+
+.count-btn:disabled {
+    opacity: .6;
+    cursor: default;
+    background: rgba(201,173,120,.15);
+    border-color: var(--border-gold);
+}
+
+/* =========================================
+   QIBLA
+   ========================================= */
 
 .center {
     text-align: center;
 }
 
 .qibla-icon {
-    color: var(--gold);
-    font-size: 75px;
+    color: var(--gold2);
+    font-size: 80px;
+
+    filter: drop-shadow(0 0 20px rgba(201,173,120,.18));
 }
 
+/* =========================================
+   PROGRESS
+   ========================================= */
+
 .progress {
-    height: 8px;
-    background: #27352b;
-    border-radius: 20px;
+    height: 9px;
+
+    background: rgba(255,255,255,.08);
+
+    border-radius: 30px;
     overflow: hidden;
-    margin: 15px 0;
+
+    margin: 17px 0;
 }
 
 .progress span {
     display: block;
+
     height: 100%;
     width: 0;
-    background: var(--gold);
-    transition: .3s;
+
+    background:
+        linear-gradient(
+            90deg,
+            #789d79,
+            var(--gold2)
+        );
+
+    border-radius: inherit;
+
+    box-shadow: 0 0 14px rgba(201,173,120,.25);
+
+    transition: width .4s ease;
 }
 
-.tracker-row, .setting-row {
+/* =========================================
+   TRACKER & SETTINGS
+   ========================================= */
+
+.tracker-row,
+.setting-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 14px 3px;
-    border-bottom: 1px solid var(--border);
+
+    gap: 12px;
+
+    padding: 15px 3px;
+
+    border-bottom: 1px solid rgba(255,255,255,.09);
 }
 
 input[type="checkbox"] {
-    width: 19px;
-    height: 19px;
+    width: 20px;
+    height: 20px;
+
     accent-color: var(--gold);
+
+    cursor: pointer;
 }
 
 .iqama-setting {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
+
+    gap: 10px;
+
+    padding: 13px 0;
+
+    border-bottom: 1px solid rgba(255,255,255,.09);
 }
 
 .iqama-setting input {
-    width: 100px;
-    padding: 9px;
-    background: #080d0a;
+    width: 115px;
+
+    padding: 10px;
+
+    background: rgba(0,0,0,.22);
     color: white;
+
     border: 1px solid var(--border);
-    border-radius: 9px;
+    border-radius: 11px;
+
     text-align: center;
 }
 
+/* =========================================
+   BOTTOM NAVIGATION
+   ========================================= */
+
 .bottom-nav {
     position: fixed;
-    z-index: 10;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    z-index: 100;
+
+    bottom: 12px;
+    left: 50%;
+
+    transform: translateX(-50%);
+
+    width: min(94%, 660px);
+
     display: flex;
     justify-content: space-around;
-    background: #0b100ef5;
-    border-top: 1px solid var(--border);
-    padding: 10px 3px calc(10px + env(safe-area-inset-bottom));
-    backdrop-filter: blur(20px);
+    align-items: center;
+
+    background: rgba(13, 20, 15, .76);
+
+    border: 1px solid rgba(255,255,255,.13);
+    border-radius: 23px;
+
+    padding: 11px 5px;
+
+    backdrop-filter: blur(32px) saturate(190%);
+    -webkit-backdrop-filter: blur(32px) saturate(190%);
+
+    box-shadow:
+        0 15px 45px rgba(0,0,0,.42),
+        inset 0 1px 1px rgba(255,255,255,.12);
 }
 
 .nav-item {
     background: none;
     border: none;
-    color: var(--muted);
-    min-width: 50px;
+
+    color: #89948c;
+
+    min-width: 48px;
+
+    padding: 3px 7px;
+
+    border-radius: 14px;
+
+    transition: .25s;
 }
 
 .nav-item b {
     display: block;
-    font-size: 22px;
+
+    font-size: 21px;
     font-weight: normal;
+
+    margin-bottom: 3px;
 }
 
 .nav-item small {
@@ -435,8 +1021,33 @@ input[type="checkbox"] {
 }
 
 .nav-item.active {
-    color: var(--gold);
+    color: var(--gold2);
+
+    background: rgba(201,173,120,.10);
+
+    text-shadow: 0 0 15px rgba(201,173,120,.25);
 }
+
+/* =========================================
+   SCROLLBAR
+   ========================================= */
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(201,173,120,.25);
+    border-radius: 20px;
+}
+
+/* =========================================
+   RESPONSIVE — DESKTOP
+   ========================================= */
 
 @media (min-width: 650px) {
     .quick-grid {
@@ -446,15 +1057,103 @@ input[type="checkbox"] {
     .prayer-grid {
         grid-template-columns: repeat(6, 1fr);
     }
+
+    .page {
+        width: min(100% - 50px, 760px);
+    }
+
+    .hero {
+        padding: 32px;
+    }
 }
 
+/* =========================================
+   RESPONSIVE — MOBILE
+   ========================================= */
+
 @media (max-width: 600px) {
+    body {
+        padding-bottom: 110px;
+    }
+
+    .topbar {
+        height: 73px;
+    }
+
+    .hero {
+        padding: 21px;
+        border-radius: 24px;
+    }
+
     .quran-text {
-        font-size: 23px;
+        font-size: 25px;
         line-height: 2.5;
     }
 
     .quran-basmala {
-        font-size: 26px;
+        font-size: 27px;
+    }
+
+    .zikr-text {
+        font-size: 22px;
+    }
+
+    .panel {
+        padding: 17px;
+    }
+
+    .bottom-nav {
+        bottom: 9px;
+    }
+}
+
+@media (max-width: 370px) {
+    .nav-item {
+        min-width: 40px;
+        padding: 3px;
+    }
+
+    .nav-item small {
+        font-size: 9px;
+    }
+
+    .prayer-grid {
+        gap: 6px;
+    }
+
+    .prayer-card {
+        padding: 13px 3px;
+    }
+
+    .prayer-card strong {
+        font-size: 14px;
+    }
+}
+
+/* =========================================
+   REDUCED MOTION
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+    }
+}
+
+/* =========================================
+   SAFARI / IPHONE SAFE AREA
+   ========================================= */
+
+@supports (padding: env(safe-area-inset-bottom)) {
+    .bottom-nav {
+        bottom: calc(9px + env(safe-area-inset-bottom));
+    }
+
+    body {
+        padding-bottom: calc(115px + env(safe-area-inset-bottom));
     }
 }
