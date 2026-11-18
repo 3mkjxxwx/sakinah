@@ -1,6 +1,7 @@
+
 /* =========================================
-   SAKINAH — EMERALD & GOLD EDITION
-   Premium Modern Islamic Glass UI
+   SAKINAH — DEEP EMERALD EDITION
+   Minimal Gold Luxury
 ========================================= */
 
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Amiri+Quran&display=swap');
@@ -13,29 +14,23 @@
 }
 
 :root {
-    /* Emerald */
-    --bg: #06130e;
-    --bg-soft: #0a1c14;
-    --green: #103c2b;
-    --green-light: #17553b;
-    --green-glow: rgba(27, 112, 72, .22);
+    --bg: #080c09;
+    --bg-soft: #0b110d;
+    --green: #101b13;
+    --green-light: #17251a;
 
-    /* Gold */
-    --gold: #d6ad55;
-    --gold-light: #f2d58c;
-    --gold-dark: #9d7835;
-    --gold-glow: rgba(214, 173, 85, .22);
+    --gold: #d6b46a;
+    --gold-light: #ead5a0;
 
-    /* Glass */
-    --glass: rgba(19, 54, 38, .36);
-    --glass-light: rgba(29, 75, 51, .43);
+    --glass: rgba(255,255,255,.035);
+    --glass-light: rgba(255,255,255,.055);
 
-    --border: rgba(214, 173, 85, .19);
-    --text: #f2f3eb;
-    --muted: #a0aa9e;
+    --border: rgba(255,255,255,.065);
+    --text: #f0f1eb;
+    --muted: #858d85;
 
     --radius: 22px;
-    --shadow: 0 12px 40px rgba(0, 0, 0, .28);
+    --shadow: 0 12px 40px rgba(0,0,0,.28);
 }
 
 html {
@@ -44,37 +39,16 @@ html {
 
 body {
     font-family: 'IBM Plex Sans Arabic', sans-serif;
-
     background:
-        radial-gradient(ellipse at 50% -15%, rgba(25, 102, 65, .28), transparent 55%),
-        radial-gradient(circle at 100% 50%, rgba(214, 173, 85, .035), transparent 35%),
+        radial-gradient(
+            ellipse at 50% -15%,
+            rgba(25,55,34,.16),
+            transparent 55%
+        ),
         var(--bg);
-
     color: var(--text);
     min-height: 100vh;
     padding-bottom: 100px;
-}
-
-/* =========================================
-   GOLDEN LIGHT EFFECT
-========================================= */
-
-@keyframes goldGlow {
-    0%, 100% {
-        box-shadow: 0 0 12px rgba(214, 173, 85, .08);
-    }
-    50% {
-        box-shadow: 0 0 24px rgba(214, 173, 85, .19);
-    }
-}
-
-@keyframes shine {
-    0% {
-        transform: translateX(-150%) rotate(20deg);
-    }
-    100% {
-        transform: translateX(150%) rotate(20deg);
-    }
 }
 
 /* =========================================
@@ -84,7 +58,6 @@ body {
 .topbar {
     height: 82px;
     padding: 0 7%;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -93,11 +66,11 @@ body {
     top: 0;
     z-index: 100;
 
-    background: rgba(5, 20, 13, .86);
+    background: rgba(8,12,9,.88);
     backdrop-filter: blur(25px);
     -webkit-backdrop-filter: blur(25px);
 
-    border-bottom: 1px solid rgba(214, 173, 85, .13);
+    border-bottom: 1px solid var(--border);
 }
 
 .brand {
@@ -105,8 +78,6 @@ body {
     align-items: center;
     gap: 13px;
 }
-
-/* الشعار */
 
 .logo {
     width: 47px;
@@ -117,40 +88,27 @@ body {
     align-items: center;
     justify-content: center;
 
-    background: linear-gradient(
-        145deg,
-        #f0d58c,
-        #c49a48 55%,
-        #98702d
-    );
+    background: linear-gradient(145deg,#1a3020,#101b13);
+    border: 1px solid rgba(255,255,255,.1);
 
-    color: #102719;
-
-    border: 1px solid rgba(255, 232, 170, .5);
+    color: var(--gold-light);
     border-radius: 15px;
 
-    font-family: 'Amiri Quran', serif;
-    font-size: 31px;
+    font-family: 'Amiri Quran',serif;
+    font-size: 32px;
     font-weight: 700;
 
     line-height: 1;
     text-align: center;
+    padding: 0 0 5px;
 
-    padding: 0;
-    padding-bottom: 3px;
-
-    box-shadow:
-        0 0 0 4px rgba(214, 173, 85, .055),
-        0 5px 22px rgba(214, 173, 85, .23),
-        inset 0 1px 3px rgba(255, 255, 255, .55);
-
-    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,.3);
 }
 
 .brand h2 {
     font-size: 19px;
     font-weight: 700;
-    color: var(--gold-light);
+    color: var(--text);
     letter-spacing: 1px;
 }
 
@@ -173,20 +131,16 @@ button {
     width: 43px;
     height: 43px;
     border-radius: 14px;
-
     background: var(--glass);
     border: 1px solid var(--border);
-
-    color: var(--gold);
+    color: var(--muted);
     font-size: 21px;
-
     transition: .25s;
 }
 
 .icon-btn:hover {
-    background: rgba(214, 173, 85, .13);
-    transform: rotate(30deg);
-    box-shadow: 0 0 18px var(--gold-glow);
+    background: var(--green);
+    color: var(--text);
 }
 
 /* =========================================
@@ -217,7 +171,7 @@ button {
 
 .page > h2 {
     font-size: 27px;
-    color: var(--gold-light);
+    color: var(--text);
     margin-bottom: 7px;
 }
 
@@ -233,17 +187,18 @@ button {
 .hero {
     position: relative;
     overflow: hidden;
-
     padding: 38px 30px;
     border-radius: 30px;
 
     background:
-        radial-gradient(circle at 90% 10%, rgba(214, 173, 85, .13), transparent 35%),
-        radial-gradient(circle at 5% 100%, rgba(28, 108, 69, .22), transparent 45%),
-        linear-gradient(145deg, #123d2b, #081c13 75%);
+        radial-gradient(
+            circle at 90% 10%,
+            rgba(214,180,106,.055),
+            transparent 35%
+        ),
+        linear-gradient(145deg,#142017,#0b100c);
 
-    border: 1px solid var(--border);
-
+    border: 1px solid rgba(255,255,255,.07);
     box-shadow: var(--shadow);
     text-align: center;
 }
@@ -253,36 +208,23 @@ button {
     position: absolute;
     left: -15px;
     bottom: -70px;
-
     font-size: 190px;
-    color: rgba(214, 173, 85, .055);
-
+    color: rgba(214,180,106,.035);
     pointer-events: none;
 }
 
-.hero::after {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, rgba(242, 213, 140, .65), transparent);
-}
-
 .hero > p:first-child {
-    color: var(--gold);
+    color: var(--muted);
     font-size: 14px;
 }
 
 #clock {
-    font-size: clamp(38px, 9vw, 68px);
+    font-size: clamp(38px,9vw,68px);
     font-weight: 500;
-    color: var(--gold-light);
+    color: var(--text);
     letter-spacing: 2px;
     margin: 12px 0;
     font-variant-numeric: tabular-nums;
-    text-shadow: 0 0 25px rgba(214, 173, 85, .17);
 }
 
 #gregDate {
@@ -301,11 +243,9 @@ button {
 
     max-width: 520px;
 
-    background: rgba(214, 173, 85, .075);
-    border: 1px solid rgba(214, 173, 85, .24);
+    background: rgba(255,255,255,.035);
+    border: 1px solid var(--border);
     border-radius: 20px;
-
-    animation: goldGlow 4s infinite;
 }
 
 .next-prayer small {
@@ -313,12 +253,12 @@ button {
 }
 
 .next-prayer h2 {
-    color: var(--gold-light);
+    color: var(--text);
     margin-top: 5px;
 }
 
 #countdown {
-    color: var(--gold);
+    color: var(--text);
     font-size: 24px;
     font-variant-numeric: tabular-nums;
 }
@@ -340,23 +280,17 @@ button {
 .section > h3,
 .panel > h3 {
     font-size: 19px;
-    color: var(--gold-light);
+    color: var(--text);
     margin-bottom: 18px;
 }
 
 .panel {
     margin-top: 25px;
     padding: 23px;
-
-    background:
-        linear-gradient(145deg, rgba(20, 65, 44, .39), rgba(10, 31, 21, .45));
-
-    border: 1px solid rgba(214, 173, 85, .13);
+    background: var(--glass);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
-
     box-shadow: var(--shadow);
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
 }
 
 .center {
@@ -369,17 +303,15 @@ button {
 
 .prayer-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3,1fr);
     gap: 12px;
 }
 
 .prayer-card {
     padding: 20px 10px;
     text-align: center;
-
     background: var(--glass);
-    border: 1px solid rgba(214, 173, 85, .09);
-
+    border: 1px solid var(--border);
     border-radius: 19px;
     transition: .25s;
 }
@@ -405,13 +337,13 @@ button {
 }
 
 .prayer-card.active {
-    background: linear-gradient(145deg, rgba(214, 173, 85, .14), rgba(19, 78, 49, .35));
-    border-color: var(--gold);
-    box-shadow: 0 0 23px rgba(214, 173, 85, .11);
+    background: rgba(24,43,29,.65);
+    border-color: rgba(140,175,144,.25);
+    box-shadow: 0 0 20px rgba(35,75,43,.1);
 }
 
 .prayer-card.active strong {
-    color: var(--gold-light);
+    color: #c6d4c4;
 }
 
 /* =========================================
@@ -420,28 +352,25 @@ button {
 
 .quick-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4,1fr);
     gap: 12px;
 }
 
 .quick-grid button {
     min-height: 105px;
     padding: 16px 7px;
-
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: 11px;
-
     border-radius: 19px;
 
-    background: linear-gradient(145deg, rgba(24, 77, 51, .38), rgba(11, 38, 25, .5));
-    border: 1px solid rgba(214, 173, 85, .12);
+    background: var(--green);
+    border: 1px solid var(--border);
 
-    color: var(--gold);
+    color: #c0cfc0;
     font-size: 25px;
-
     transition: .25s;
 }
 
@@ -451,10 +380,9 @@ button {
 }
 
 .quick-grid button:hover {
-    background: rgba(214, 173, 85, .1);
-    border-color: var(--gold);
+    background: var(--green-light);
+    border-color: rgba(255,255,255,.13);
     transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(214, 173, 85, .08);
 }
 
 /* =========================================
@@ -462,13 +390,12 @@ button {
 ========================================= */
 
 .daily-verse {
-    color: var(--gold-light);
-    font-family: 'Amiri Quran', serif;
+    color: var(--text);
+    font-family: 'Amiri Quran',serif;
     font-size: 25px;
     line-height: 2;
     text-align: center;
     margin: 15px 0;
-    text-shadow: 0 0 18px rgba(214, 173, 85, .15);
 }
 
 #dailyVerseRef {
@@ -485,39 +412,31 @@ button {
 .primary-btn {
     padding: 13px 23px;
     border-radius: 14px;
-
-    background: linear-gradient(135deg, #f0d58c, #d2a84f 60%, #a9823c);
-
-    color: #102719;
+    background: #1b2a1e;
+    border: 1px solid rgba(255,255,255,.08);
+    color: var(--text);
     font-size: 14px;
-    font-weight: 700;
-
-    box-shadow: 0 5px 18px rgba(214, 173, 85, .13);
+    font-weight: 600;
     transition: .2s;
 }
 
 .primary-btn:hover {
-    filter: brightness(1.1);
+    background: #263a2a;
     transform: translateY(-2px);
-    box-shadow: 0 7px 24px rgba(214, 173, 85, .23);
 }
 
 .outline-btn {
     padding: 11px 19px;
     border-radius: 13px;
-
-    background: rgba(214, 173, 85, .065);
+    background: var(--glass);
     border: 1px solid var(--border);
-
-    color: var(--gold-light);
+    color: var(--text);
     font-size: 13px;
-
     transition: .2s;
 }
 
 .outline-btn:hover {
-    background: rgba(214, 173, 85, .14);
-    border-color: var(--gold);
+    background: var(--glass-light);
 }
 
 /* =========================================
@@ -533,44 +452,32 @@ button {
 .tabs button {
     flex: 1;
     padding: 13px;
-
-    background: var(--glass);
+    background: var(--green);
     border: 1px solid var(--border);
     border-radius: 13px;
-
-    color: var(--gold-light);
-    transition: .2s;
-}
-
-.tabs button:hover {
-    background: rgba(214, 173, 85, .12);
+    color: var(--text);
 }
 
 .search {
     width: 100%;
     padding: 15px;
-
     margin-bottom: 17px;
-
-    background: rgba(15, 48, 32, .5);
+    background: var(--glass);
     border: 1px solid var(--border);
     border-radius: 14px;
-
     color: var(--text);
     outline: none;
-
     font-family: inherit;
 }
 
 .search:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 15px rgba(214, 173, 85, .08);
+    border-color: rgba(160,190,160,.4);
 }
 
 #surahList,
 #juzList {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2,1fr);
     gap: 10px;
 }
 
@@ -578,22 +485,18 @@ button {
 #juzList button {
     text-align: right;
     padding: 16px;
-
-    background: var(--glass);
-    border: 1px solid rgba(214, 173, 85, .09);
+    background: var(--green);
+    border: 1px solid var(--border);
     border-radius: 15px;
-
-    color: var(--gold-light);
+    color: var(--text);
     font-size: 14px;
-
     transition: .2s;
 }
 
 #surahList button:hover,
 #juzList button:hover {
-    border-color: var(--gold);
-    background: rgba(214, 173, 85, .075);
-    transform: translateY(-2px);
+    border-color: rgba(160,190,160,.3);
+    background: var(--green-light);
 }
 
 #surahList button small,
@@ -615,34 +518,31 @@ button {
 }
 
 .reader-header h2 {
-    color: var(--gold-light);
+    color: var(--text);
     font-size: 20px;
 }
 
-/* البسملة الذهبية */
+/* البسملة فقط بالذهبي */
 
 .quran-basmala {
-    font-family: 'Amiri Quran', serif;
+    font-family: 'Amiri Quran',serif;
     text-align: center;
-    font-size: 30px;
+    font-size: 29px;
     color: var(--gold-light);
     line-height: 2.3;
     margin-bottom: 25px;
-
-    text-shadow:
-        0 0 10px rgba(214, 173, 85, .25),
-        0 0 25px rgba(214, 173, 85, .12);
+    text-shadow: 0 0 18px rgba(214,180,106,.22);
 }
 
+/* نص الآيات */
+
 .quran-text {
-    font-family: 'Amiri Quran', serif;
+    font-family: 'Amiri Quran',serif;
     font-size: 25px;
     line-height: 2.6;
     text-align: justify;
-    color: #f1efe5;
+    color: #eeeae1;
 }
-
-/* علامات الآيات الذهبية */
 
 .ayah-mark {
     color: var(--gold);
@@ -650,8 +550,6 @@ button {
     position: relative;
     margin: 0 5px;
     font-size: 26px;
-
-    text-shadow: 0 0 12px rgba(214, 173, 85, .35);
 }
 
 .ayah-number {
@@ -662,7 +560,6 @@ button {
     justify-content: center;
     font-family: sans-serif;
     font-size: 10px;
-    color: var(--gold-light);
 }
 
 .quran-source {
@@ -670,7 +567,7 @@ button {
 }
 
 .quran-source a {
-    color: var(--gold);
+    color: var(--muted);
 }
 
 /* =========================================
@@ -680,23 +577,16 @@ button {
 .zikr-card {
     padding: 22px;
     margin-top: 14px;
-
-    background: linear-gradient(145deg, rgba(20, 65, 44, .4), rgba(9, 31, 20, .5));
+    background: var(--green);
     border: 1px solid var(--border);
     border-radius: 20px;
-
-    transition: .25s;
-}
-
-.zikr-card:hover {
-    border-color: rgba(214, 173, 85, .35);
 }
 
 .zikr-text {
-    font-family: 'Amiri Quran', serif;
+    font-family: 'Amiri Quran',serif;
     font-size: 24px;
     line-height: 2.2;
-    color: var(--gold-light);
+    color: var(--text);
 }
 
 .zikr-card .muted {
@@ -712,14 +602,11 @@ button {
 .count-btn {
     width: 100%;
     padding: 15px;
-
-    background: rgba(214, 173, 85, .1);
+    background: rgba(255,255,255,.045);
     border: 1px solid var(--border);
     border-radius: 14px;
-
-    color: var(--gold-light);
+    color: var(--text);
     font-size: 14px;
-
     transition: .2s;
 }
 
@@ -737,14 +624,13 @@ button {
 
 .qibla-icon {
     font-size: 75px;
-    color: var(--gold);
+    color: #b9c9b9;
     margin: 20px 0;
-    text-shadow: 0 0 25px rgba(214, 173, 85, .25);
 }
 
 #qiblaDegree {
     font-size: 48px;
-    color: var(--gold-light);
+    color: var(--text);
     margin-bottom: 8px;
 }
 
@@ -756,10 +642,8 @@ button {
     width: 100%;
     height: 9px;
     overflow: hidden;
-
-    background: rgba(255, 255, 255, .08);
+    background: rgba(255,255,255,.08);
     border-radius: 20px;
-
     margin: 15px 0 22px;
 }
 
@@ -767,11 +651,8 @@ button {
     display: block;
     width: 0;
     height: 100%;
-
-    background: linear-gradient(90deg, #a9823c, #f2d58c);
+    background: linear-gradient(90deg,#263e2b,#77947a);
     border-radius: inherit;
-
-    box-shadow: 0 0 12px rgba(214, 173, 85, .3);
     transition: width .4s;
 }
 
@@ -782,26 +663,24 @@ button {
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-
     padding: 16px 3px;
-    border-bottom: 1px solid rgba(214, 173, 85, .09);
-
+    border-bottom: 1px solid var(--border);
     font-size: 14px;
 }
 
 .tracker-row input,
 .setting-row input {
-    accent-color: var(--gold);
+    accent-color: #829b83;
     width: 19px;
     height: 19px;
 }
 
 .iqama-setting input {
     padding: 9px;
-    background: var(--glass);
+    background: var(--green);
     border: 1px solid var(--border);
     border-radius: 10px;
-    color: var(--gold-light);
+    color: var(--text);
     color-scheme: dark;
 }
 
@@ -815,18 +694,17 @@ button {
     left: 0;
     right: 0;
     z-index: 200;
-
     display: flex;
     justify-content: space-around;
     align-items: center;
 
     padding: 10px 5px calc(10px + env(safe-area-inset-bottom));
 
-    background: rgba(5, 22, 14, .94);
+    background: rgba(8,12,9,.94);
     backdrop-filter: blur(25px);
     -webkit-backdrop-filter: blur(25px);
 
-    border-top: 1px solid rgba(214, 173, 85, .17);
+    border-top: 1px solid var(--border);
 }
 
 .nav-item {
@@ -835,10 +713,8 @@ button {
     flex-direction: column;
     align-items: center;
     gap: 5px;
-
     background: transparent;
-    color: #849287;
-
+    color: #747d75;
     transition: .2s;
 }
 
@@ -852,24 +728,33 @@ button {
 }
 
 .nav-item.active {
-    color: var(--gold-light);
+    color: #d4dfd2;
 }
 
 .nav-item.active b {
-    text-shadow: 0 0 15px rgba(214, 173, 85, .6);
+    text-shadow: 0 0 15px rgba(150,190,150,.25);
+}
+
+/* =========================================
+   GOLDEN LIGHT — لمعة خفيفة فقط
+========================================= */
+
+.logo,
+.quran-basmala {
+    text-shadow: 0 0 15px rgba(214,180,106,.18);
 }
 
 /* =========================================
    RESPONSIVE
 ========================================= */
 
-@media (min-width: 768px) {
+@media (min-width:768px) {
     .hero {
         padding: 55px;
     }
 
     .prayer-grid {
-        grid-template-columns: repeat(6, 1fr);
+        grid-template-columns: repeat(6,1fr);
     }
 
     .panel {
@@ -877,7 +762,7 @@ button {
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width:480px) {
     .topbar {
         padding: 0 18px;
         height: 72px;
@@ -893,11 +778,11 @@ button {
     }
 
     .prayer-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2,1fr);
     }
 
     .quick-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2,1fr);
     }
 
     .quick-grid button {
@@ -916,10 +801,6 @@ button {
     .quran-text {
         font-size: 22px;
         line-height: 2.4;
-    }
-
-    .quran-basmala {
-        font-size: 27px;
     }
 
     .next-prayer {
@@ -944,13 +825,8 @@ button {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(var(--gold-dark), var(--gold));
+    background: #354638;
     border-radius: 10px;
-}
-
-::selection {
-    background: rgba(214, 173, 85, .3);
-    color: white;
 }
 
 [hidden] {
