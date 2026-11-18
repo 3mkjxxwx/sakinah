@@ -1,37 +1,52 @@
+
 /* =========================================
-   SAKINAH — GLASS EDITION
-   iOS + macOS inspired interface
+   SAKINAH — PREMIUM DARK GLASS
+   Deep Forest + Champagne Gold
+   iOS / macOS Inspired UI
 ========================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Amiri:wght@400;700&family=Amiri+Quran&display=swap');
 
 * {
     box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
 }
 
 :root {
-    --bg: #080d0b;
+    /* Main palette */
+    --bg: #0a110d;
+    --bg-deep: #080d0a;
+    --bg-soft: #101612;
 
-    --glass: rgba(255, 255, 255, 0.065);
-    --glass-light: rgba(255, 255, 255, 0.095);
-    --glass-dark: rgba(8, 17, 12, 0.72);
+    /* Green surfaces */
+    --surface: #181a19;
+    --surface-main: #233326;
+    --surface-glass: rgba(24, 26, 25, .76);
+    --surface-light: rgba(255,255,255,.045);
 
-    --card: rgba(255, 255, 255, 0.065);
-    --card2: rgba(255, 255, 255, 0.09);
+    /* Gold accent */
+    --gold: #d8be82;
+    --gold-light: #ead6a8;
+    --gold-glow: rgba(216,190,130,.16);
 
-    --border: rgba(225, 245, 229, 0.15);
-    --border-light: rgba(255, 255, 255, 0.22);
+    /* Borders */
+    --border: #2d3b32;
+    --border-soft: rgba(140,150,144,.12);
+    --border-gold: rgba(216,190,130,.25);
 
-    --gold: #d7bd87;
-    --gold-light: #f1dfb4;
+    /* Text */
+    --text: #f2f4f3;
+    --muted: #8c9690;
+    --green: #aab8ad;
 
-    --text: #f5f7f3;
-    --muted: #aab7ae;
-    --green: #b5d6bd;
-
-    --blur: 24px;
+    --radius: 21px;
+    --blur: 22px;
 
     --shadow:
-        0 15px 45px rgba(0, 0, 0, 0.28),
-        inset 0 1px 0 rgba(255, 255, 255, 0.09);
+        0 12px 35px rgba(0,0,0,.22),
+        inset 0 1px 0 rgba(255,255,255,.035);
 }
 
 html {
@@ -39,38 +54,25 @@ html {
 }
 
 body {
-    margin: 0;
     min-height: 100vh;
+    padding-bottom: 105px;
+    overflow-x: hidden;
+
+    font-family: 'IBM Plex Sans Arabic', sans-serif;
+    color: var(--text);
 
     background:
         radial-gradient(
-            ellipse at 15% 5%,
-            rgba(58, 111, 76, 0.30),
-            transparent 42%
+            ellipse at 50% -20%,
+            rgba(35,51,38,.42),
+            transparent 55%
         ),
         radial-gradient(
-            ellipse at 90% 35%,
-            rgba(151, 127, 76, 0.13),
-            transparent 38%
+            ellipse at 100% 65%,
+            rgba(216,190,130,.025),
+            transparent 45%
         ),
-        radial-gradient(
-            ellipse at 50% 100%,
-            rgba(38, 91, 61, 0.18),
-            transparent 50%
-        ),
-        #080d0b;
-
-    color: var(--text);
-
-    font-family:
-        -apple-system,
-        BlinkMacSystemFont,
-        "SF Pro Display",
-        "Segoe UI",
-        sans-serif;
-
-    padding-bottom: 110px;
-    overflow-x: hidden;
+        var(--bg);
 }
 
 button,
@@ -79,9 +81,14 @@ input {
 }
 
 button {
-    cursor: pointer;
     color: inherit;
+    cursor: pointer;
+    border: none;
     -webkit-tap-highlight-color: transparent;
+}
+
+input {
+    color: var(--text);
 }
 
 [hidden] {
@@ -103,33 +110,30 @@ button {
 .icon-btn,
 .quick-grid button,
 .iqama-setting input {
-    backdrop-filter: blur(var(--blur)) saturate(155%);
-    -webkit-backdrop-filter: blur(var(--blur)) saturate(155%);
+    backdrop-filter: blur(var(--blur)) saturate(135%);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(135%);
 
-    background: var(--glass);
-
-    border: 1px solid var(--border);
-
+    background: var(--surface-glass);
+    border: 1px solid var(--border-soft);
     box-shadow: var(--shadow);
 }
 
 /* =========================================
-   TOP BAR
+   TOPBAR
 ========================================= */
 
 .topbar {
-    max-width: 760px;
-    margin: auto;
-
+    width: min(100% - 30px, 760px);
     height: 82px;
-    padding: 12px 20px;
+    margin: auto;
+    padding: 10px 5px;
 
     display: flex;
     align-items: center;
     justify-content: space-between;
 
     position: relative;
-    z-index: 5;
+    z-index: 50;
 }
 
 .brand {
@@ -138,56 +142,96 @@ button {
     gap: 13px;
 }
 
-.brand h2 {
-    margin: 0;
-    font-size: 19px;
-    font-weight: 650;
-    letter-spacing: 0.3px;
-}
-
-.brand small {
-    color: var(--muted);
-    letter-spacing: 3px;
-    font-size: 10px;
-}
+/* LOGO */
 
 .logo {
-    width: 46px;
-    height: 46px;
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
 
-    border: 1px solid rgba(215, 189, 135, 0.55);
-    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    display: grid;
-    place-items: center;
+    padding: 0;
+    padding-bottom: 3px;
 
-    color: var(--gold-light);
-    font-size: 25px;
+    border-radius: 15px;
+    border: 1px solid rgba(216,190,130,.28);
 
     background:
         linear-gradient(
             145deg,
-            rgba(255, 255, 255, 0.16),
-            rgba(255, 255, 255, 0.025)
+            rgba(35,51,38,.95),
+            rgba(15,22,17,.98)
         );
 
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
+    color: var(--gold-light);
+
+    font-family: 'Amiri Quran', 'Amiri', serif;
+    font-size: 34px;
+    font-weight: 700;
+
+    line-height: 1;
+    text-align: center;
 
     box-shadow:
-        0 5px 25px rgba(215, 189, 135, 0.10),
-        inset 0 1px 1px rgba(255, 255, 255, 0.2);
+        0 5px 20px rgba(0,0,0,.25),
+        0 0 18px rgba(216,190,130,.055),
+        inset 0 1px 0 rgba(255,255,255,.08);
+
+    position: relative;
+    overflow: hidden;
+}
+
+.logo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.07),
+            transparent 45%
+        );
+}
+
+.brand h2 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: .2px;
+    color: var(--text);
+}
+
+.brand small {
+    display: block;
+    color: var(--muted);
+    font-size: 9px;
+    letter-spacing: 4px;
+    margin-top: 1px;
 }
 
 .icon-btn {
-    padding: 10px 15px;
-    border-radius: 15px;
-    transition: 0.25s;
+    width: 43px;
+    height: 43px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 14px;
+    color: var(--gold);
+    font-size: 20px;
+
+    transition: .25s;
 }
 
 .icon-btn:hover {
-    background: var(--glass-light);
-    border-color: var(--border-light);
+    background: var(--gold-glow);
+    border-color: var(--border-gold);
+    transform: rotate(25deg);
 }
 
 /* =========================================
@@ -197,25 +241,37 @@ button {
 .page {
     display: none;
 
-    width: min(100% - 30px, 700px);
-    margin: auto;
+    width: min(100% - 30px, 760px);
+    margin: 18px auto 30px;
 }
 
 .page.active {
     display: block;
-    animation: pageAppear 0.35s ease;
+    animation: pageAppear .35s ease;
 }
 
 @keyframes pageAppear {
     from {
         opacity: 0;
-        transform: translateY(8px);
+        transform: translateY(9px);
     }
 
     to {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+.page > h2 {
+    color: var(--text);
+    font-size: 25px;
+    font-weight: 700;
+    margin-bottom: 7px;
+}
+
+.muted {
+    color: var(--muted);
+    font-size: 13px;
 }
 
 /* =========================================
@@ -226,250 +282,42 @@ button {
     position: relative;
     overflow: hidden;
 
-    border-radius: 28px;
+    padding: 31px 26px;
+    margin-top: 8px;
 
-    padding: 25px;
-    margin-top: 12px;
+    border-radius: 27px;
+    border: 1px solid rgba(140,150,144,.15);
 
     background:
+        radial-gradient(
+            circle at 85% 10%,
+            rgba(216,190,130,.055),
+            transparent 35%
+        ),
         linear-gradient(
-            135deg,
-            rgba(83, 125, 91, 0.25),
-            rgba(255, 255, 255, 0.045) 50%,
-            rgba(15, 29, 20, 0.58)
+            140deg,
+            #233326 0%,
+            #172119 48%,
+            #111713 100%
         );
-
-    border-color: rgba(190, 221, 190, 0.22);
 }
 
 .hero::before {
-    content: "";
+    content: "۞";
 
     position: absolute;
-    top: -100px;
-    left: -80px;
+    left: -28px;
+    bottom: -80px;
 
-    width: 230px;
-    height: 230px;
+    font-family: 'Amiri Quran', serif;
+    font-size: 200px;
 
-    background: rgba(204, 224, 194, 0.09);
-
-    filter: blur(65px);
-    border-radius: 50%;
+    color: rgba(216,190,130,.035);
 
     pointer-events: none;
 }
 
 .hero::after {
-    content: "";
-
-    position: absolute;
-    top: 0;
-    left: 20px;
-    right: 20px;
-
-    height: 1px;
-
-    background:
-        linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.38),
-            transparent
-        );
-}
-
-.hero h1 {
-    font-size: clamp(38px, 9vw, 55px);
-    margin: 12px 0;
-
-    direction: ltr;
-    text-align: right;
-
-    font-variant-numeric: tabular-nums;
-    font-weight: 600;
-
-    position: relative;
-    z-index: 1;
-}
-
-.hero p {
-    color: var(--muted);
-    font-size: 13px;
-}
-
-.next-prayer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    border-top: 1px solid rgba(255, 255, 255, 0.13);
-
-    padding-top: 18px;
-    margin-top: 20px;
-
-    position: relative;
-    z-index: 1;
-}
-
-.next-prayer h2 {
-    margin: 7px 0;
-}
-
-#countdown {
-    color: var(--gold-light);
-    font-size: 24px;
-    font-weight: 600;
-
-    direction: ltr;
-    font-variant-numeric: tabular-nums;
-
-    text-shadow: 0 0 20px rgba(215, 189, 135, 0.18);
-}
-
-/* =========================================
-   BUTTONS
-========================================= */
-
-.outline-btn {
-    background: rgba(255, 255, 255, 0.045);
-
-    color: var(--gold-light);
-
-    border: 1px solid rgba(215, 189, 135, 0.30);
-
-    padding: 10px 15px;
-    border-radius: 14px;
-
-    margin-top: 10px;
-
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-
-    transition: 0.25s;
-}
-
-.outline-btn:hover {
-    background: rgba(215, 189, 135, 0.12);
-}
-
-.primary-btn {
-    width: 100%;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(108, 151, 113, 0.43),
-            rgba(43, 79, 53, 0.55)
-        );
-
-    color: white;
-
-    border: 1px solid rgba(177, 221, 183, 0.30);
-
-    padding: 14px;
-    border-radius: 15px;
-
-    margin-top: 12px;
-
-    backdrop-filter: blur(15px);
-    -webkit-backdrop-filter: blur(15px);
-
-    transition: 0.25s;
-}
-
-.primary-btn:hover {
-    filter: brightness(1.15);
-}
-
-/* =========================================
-   SECTIONS
-========================================= */
-
-.section {
-    margin: 27px 0;
-}
-
-.section h3,
-.panel h3 {
-    font-size: 17px;
-    margin-top: 0;
-    font-weight: 650;
-}
-
-/* =========================================
-   PRAYER CARDS
-========================================= */
-
-.prayer-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-}
-
-.prayer-card {
-    text-align: center;
-
-    border-radius: 19px;
-    padding: 15px 5px;
-
-    transition:
-        transform 0.25s,
-        border-color 0.25s,
-        background 0.25s;
-}
-
-.prayer-card:hover {
-    transform: translateY(-3px);
-    background: var(--glass-light);
-}
-
-.prayer-card.active {
-    border-color: rgba(215, 189, 135, 0.65);
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(215, 189, 135, 0.13),
-            rgba(255, 255, 255, 0.055)
-        );
-
-    box-shadow:
-        0 0 25px rgba(215, 189, 135, 0.07),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
-}
-
-.prayer-card small {
-    display: block;
-    color: var(--muted);
-}
-
-.prayer-card strong {
-    display: block;
-    margin: 9px 0;
-    font-size: 16px;
-}
-
-.prayer-card em {
-    color: var(--green);
-    font-size: 10px;
-    font-style: normal;
-}
-
-/* =========================================
-   PANELS
-========================================= */
-
-.panel {
-    border-radius: 24px;
-    padding: 19px;
-    margin: 18px 0;
-
-    position: relative;
-    overflow: hidden;
-}
-
-.panel::before {
     content: "";
 
     position: absolute;
@@ -483,11 +331,288 @@ button {
         linear-gradient(
             90deg,
             transparent,
-            rgba(255, 255, 255, 0.27),
+            rgba(255,255,255,.22),
             transparent
         );
 
     pointer-events: none;
+}
+
+.hero > p:first-child {
+    color: var(--muted);
+    font-size: 13px;
+    position: relative;
+    z-index: 1;
+}
+
+.hero h1 {
+    position: relative;
+    z-index: 1;
+
+    font-size: clamp(40px, 9vw, 62px);
+    font-weight: 600;
+
+    margin: 13px 0 8px;
+
+    direction: ltr;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 1px;
+}
+
+.hero > p:nth-of-type(2) {
+    position: relative;
+    z-index: 1;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* =========================================
+   NEXT PRAYER
+========================================= */
+
+.next-prayer {
+    position: relative;
+    z-index: 1;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin-top: 25px;
+    padding: 19px;
+
+    border-radius: 18px;
+    border: 1px solid rgba(216,190,130,.12);
+
+    background: rgba(8,13,10,.28);
+}
+
+.next-prayer small {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.next-prayer h2 {
+    margin-top: 6px;
+    font-size: 21px;
+    color: var(--text);
+}
+
+#countdown {
+    color: var(--gold);
+    font-size: 25px;
+    font-weight: 600;
+
+    direction: ltr;
+    font-variant-numeric: tabular-nums;
+
+    text-shadow: 0 0 18px rgba(216,190,130,.13);
+}
+
+#locationLabel {
+    position: relative;
+    z-index: 1;
+
+    margin: 16px 0 4px;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+.outline-btn {
+    padding: 11px 17px;
+    margin-top: 11px;
+
+    border-radius: 13px;
+    border: 1px solid var(--border-gold);
+
+    background: rgba(255,255,255,.025);
+
+    color: var(--gold-light);
+    font-size: 13px;
+
+    transition: .25s;
+}
+
+.outline-btn:hover {
+    background: var(--gold-glow);
+    border-color: rgba(216,190,130,.48);
+}
+
+.primary-btn {
+    width: 100%;
+
+    padding: 14px 18px;
+    margin-top: 13px;
+
+    border-radius: 15px;
+    border: 1px solid rgba(140,150,144,.17);
+
+    background:
+        linear-gradient(
+            135deg,
+            #263a2b,
+            #1a2920
+        );
+
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+
+    box-shadow:
+        0 5px 18px rgba(0,0,0,.17),
+        inset 0 1px 0 rgba(255,255,255,.06);
+
+    transition: .25s;
+}
+
+.primary-btn:hover {
+    background:
+        linear-gradient(
+            135deg,
+            #304534,
+            #203126
+        );
+
+    border-color: rgba(216,190,130,.22);
+    transform: translateY(-2px);
+}
+
+button:focus-visible,
+input:focus-visible {
+    outline: 2px solid var(--gold);
+    outline-offset: 3px;
+}
+
+/* =========================================
+   SECTIONS
+========================================= */
+
+.section {
+    margin: 30px 0;
+}
+
+.section > h3,
+.panel > h3 {
+    color: var(--text);
+    font-size: 17px;
+    font-weight: 600;
+    margin: 0 0 17px;
+}
+
+.panel {
+    position: relative;
+    overflow: hidden;
+
+    padding: 22px;
+    margin: 19px 0;
+
+    border-radius: 23px;
+    border: 1px solid var(--border-soft);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.045),
+            rgba(255,255,255,.018)
+        ),
+        rgba(16,22,18,.76);
+}
+
+.panel::before {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    left: 18%;
+    right: 18%;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.17),
+            transparent
+        );
+
+    pointer-events: none;
+}
+
+.center {
+    text-align: center;
+}
+
+/* =========================================
+   PRAYER GRID
+========================================= */
+
+.prayer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 11px;
+}
+
+.prayer-card {
+    padding: 18px 8px;
+
+    text-align: center;
+    border-radius: 18px;
+
+    background: #181a19;
+    border: 1px solid var(--border-soft);
+
+    transition: .25s;
+}
+
+.prayer-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(140,150,144,.25);
+}
+
+.prayer-card small {
+    display: block;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.prayer-card strong {
+    display: block;
+    margin: 9px 0;
+    color: var(--text);
+    font-size: 17px;
+}
+
+.prayer-card em {
+    display: block;
+    color: var(--muted);
+    font-size: 10px;
+    font-style: normal;
+}
+
+.prayer-card.active {
+    border-color: rgba(216,190,130,.45);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(216,190,130,.085),
+            rgba(24,26,25,.95)
+        );
+
+    box-shadow:
+        0 0 22px rgba(216,190,130,.045),
+        inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+.prayer-card.active strong {
+    color: var(--gold-light);
 }
 
 /* =========================================
@@ -501,27 +626,35 @@ button {
 }
 
 .quick-grid button {
-    border-radius: 19px;
-    min-height: 88px;
+    min-height: 96px;
+    padding: 15px 8px;
 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    border-radius: 18px;
+    border: 1px solid var(--border-soft);
+
+    background: #181a19;
+
+    color: var(--gold);
     font-size: 25px;
-    color: var(--gold-light);
 
-    transition: 0.25s;
-}
-
-.quick-grid button:hover {
-    background: rgba(255, 255, 255, 0.13);
-    transform: translateY(-3px);
+    transition: .25s;
 }
 
 .quick-grid button span {
-    display: block;
-
     color: var(--text);
-    font-size: 13px;
+    font-size: 12px;
+}
 
-    margin-top: 7px;
+.quick-grid button:hover {
+    transform: translateY(-3px);
+    background: #202923;
+    border-color: var(--border-gold);
 }
 
 /* =========================================
@@ -529,43 +662,50 @@ button {
 ========================================= */
 
 .daily-verse {
-    font-size: 25px;
-    line-height: 2;
+    font-family: 'Amiri Quran', 'Amiri', serif;
+
+    color: var(--text);
+    font-size: 26px;
+    line-height: 2.1;
 
     text-align: center;
-    color: #f1ead9;
+    margin: 12px 0;
 }
 
-.muted {
+#dailyVerseRef {
+    text-align: center;
     color: var(--muted);
-    font-size: 13px;
+    font-size: 12px;
+    margin: 10px 0 14px;
 }
 
 /* =========================================
-   TABS
+   QURAN TABS
 ========================================= */
 
 .tabs {
     display: flex;
-    gap: 9px;
-    margin: 15px 0;
+    gap: 10px;
+    margin: 20px 0;
 }
 
 .tabs button {
     flex: 1;
-
-    padding: 12px;
+    padding: 13px;
 
     border-radius: 14px;
+    border: 1px solid var(--border-soft);
 
+    background: var(--surface);
     color: var(--muted);
 
-    transition: 0.2s;
+    font-size: 14px;
+    transition: .2s;
 }
 
 .tabs button:hover {
-    color: var(--text);
-    background: var(--glass-light);
+    color: var(--gold-light);
+    border-color: var(--border-gold);
 }
 
 /* =========================================
@@ -574,66 +714,75 @@ button {
 
 .search {
     width: 100%;
+    padding: 15px;
 
-    padding: 14px;
+    margin-bottom: 16px;
 
-    color: white;
+    border-radius: 14px;
+    border: 1px solid var(--border);
 
-    border-radius: 15px;
-    margin-bottom: 15px;
+    background: #151a17;
+    color: var(--text);
 
     outline: none;
+    font-family: inherit;
+    font-size: 14px;
 
-    transition: 0.2s;
-}
-
-.search:focus {
-    border-color: rgba(215, 189, 135, 0.55);
-
-    box-shadow:
-        0 0 0 3px rgba(215, 189, 135, 0.08);
+    transition: .2s;
 }
 
 .search::placeholder {
-    color: #89958d;
+    color: var(--muted);
+}
+
+.search:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(216,190,130,.06);
 }
 
 /* =========================================
-   SURAH & JUZ LISTS
+   SURAH & JUZ
 ========================================= */
 
 #surahList,
 #juzList {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 11px;
 }
 
 #surahList button,
 #juzList button {
-    border-radius: 16px;
-    padding: 15px 12px;
+    padding: 16px 14px;
 
     text-align: right;
 
+    border-radius: 15px;
+    border: 1px solid var(--border-soft);
+
+    background: #181a19;
     color: var(--text);
 
-    transition: 0.2s;
+    font-family: inherit;
+    font-size: 14px;
+
+    transition: .2s;
 }
 
 #surahList button:hover,
 #juzList button:hover {
-    background: var(--glass-light);
-    border-color: var(--border-light);
+    border-color: var(--border-gold);
+    background: #202923;
     transform: translateY(-2px);
 }
 
-#surahList small,
-#juzList small {
+#surahList button small,
+#juzList button small {
     display: block;
+    margin-top: 6px;
 
     color: var(--muted);
-    margin-top: 6px;
+    font-size: 11px;
 }
 
 /* =========================================
@@ -644,82 +793,94 @@ button {
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     gap: 10px;
 
+    padding-bottom: 15px;
     border-bottom: 1px solid var(--border);
-    padding-bottom: 14px;
 }
 
 .reader-header h2 {
-    color: var(--gold-light);
+    color: var(--text);
+    font-size: 19px;
     margin: 0;
 }
 
-.quran-text,
-.quran-text span,
 .quran-basmala {
-    font-family: "Amiri Quran", "Amiri", serif !important;
-}
+    padding: 22px 5px;
+    margin-bottom: 16px;
 
-.quran-text {
-    font-size: 27px;
-    line-height: 2.7;
+    border-bottom: 1px solid var(--border-soft);
 
-    text-align: justify;
-    direction: rtl;
-
-    color: #f1e8d5;
-
-    padding: 18px 3px;
-}
-
-.quran-basmala {
-    text-align: center;
-
+    font-family: 'Amiri Quran', serif;
     font-size: 30px;
     line-height: 2.3;
 
-    color: var(--gold-light);
+    text-align: center;
 
-    padding: 20px 5px;
+    color: var(--gold);
 
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 15px;
+    text-shadow:
+        0 0 15px rgba(216,190,130,.13);
 }
 
-/* End of Ayah */
+.quran-text {
+    padding: 18px 3px;
+
+    font-family: 'Amiri Quran', 'Amiri', serif;
+    font-size: 27px;
+    line-height: 2.7;
+
+    direction: rtl;
+    text-align: justify;
+
+    color: #e8eae5;
+}
+
+.quran-text span {
+    font-family: 'Amiri Quran', 'Amiri', serif;
+}
 
 .ayah-mark {
     display: inline-flex;
-
     align-items: center;
     justify-content: center;
 
     position: relative;
 
-    width: 34px;
-    height: 34px;
-
+    width: 35px;
+    height: 35px;
     margin: 0 5px;
-
-    color: var(--gold-light);
-
-    font-family: "Amiri", "Traditional Arabic", serif !important;
-
-    font-size: 25px;
-    white-space: nowrap;
 
     vertical-align: middle;
 
-    text-shadow: 0 0 12px rgba(215, 189, 135, 0.18);
+    color: var(--gold);
+    font-family: 'Amiri', serif !important;
+    font-size: 25px;
+
+    white-space: nowrap;
+
+    text-shadow: 0 0 12px rgba(216,190,130,.16);
 }
 
 .ayah-number {
-    font-family: "Amiri", "Traditional Arabic", serif !important;
-    font-size: 13px;
-
     position: absolute;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--gold-light);
+    font-family: 'Amiri', serif !important;
+    font-size: 12px;
+}
+
+.quran-source {
+    color: var(--muted);
+}
+
+.quran-source a {
+    color: var(--gold);
 }
 
 /* =========================================
@@ -727,137 +888,322 @@ button {
 ========================================= */
 
 .zikr-card {
-    border-radius: 21px;
-    padding: 19px;
-    margin: 13px 0;
+    padding: 21px;
+    margin: 14px 0;
 
-    transition: 0.25s;
+    border-radius: 20px;
+    border: 1px solid var(--border-soft);
+
+    background: #181a19;
+
+    transition: .25s;
 }
 
 .zikr-card:hover {
-    border-color: var(--border-light);
+    border-color: var(--border);
 }
 
 .zikr-text {
-    font-size: 21px;
+    font-family: 'Amiri Quran', 'Amiri', serif;
+    font-size: 24px;
     line-height: 2.2;
+
+    color: var(--text);
+}
+
+.zikr-card .muted {
+    margin: 10px 0;
+}
+
+.zikr-card > p:last-of-type {
+    color: var(--muted);
+    font-size: 12px;
+    margin: 12px 0;
 }
 
 .count-btn {
     width: 100%;
+    padding: 14px;
+    margin-top: 13px;
+
+    border-radius: 14px;
+    border: 1px solid var(--border-gold);
 
     background:
         linear-gradient(
             135deg,
-            rgba(108, 151, 113, 0.30),
-            rgba(43, 79, 53, 0.50)
+            rgba(35,51,38,.95),
+            rgba(20,29,23,.95)
         );
 
-    border: 1px solid rgba(177, 221, 183, 0.28);
+    color: var(--gold-light);
+    font-size: 14px;
 
-    border-radius: 15px;
-
-    padding: 14px;
-    margin-top: 13px;
-
-    transition: 0.2s;
+    transition: .2s;
 }
 
 .count-btn:hover {
-    filter: brightness(1.15);
+    border-color: rgba(216,190,130,.48);
+}
+
+.count-btn:active {
+    transform: scale(.98);
+}
+
+.count-btn:disabled {
+    opacity: .55;
 }
 
 /* =========================================
-   QIBLA
+   QIBLA COMPASS
 ========================================= */
 
-.center {
-    text-align: center;
+.qibla-compass {
+    width: min(270px, 75vw);
+    aspect-ratio: 1;
+
+    margin: 20px auto 30px;
+
+    position: relative;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(35,51,38,.24),
+            rgba(10,17,13,.85) 70%
+        );
+
+    border: 1px solid var(--border);
+
+    box-shadow:
+        0 0 35px rgba(0,0,0,.25),
+        inset 0 0 30px rgba(255,255,255,.025);
 }
 
-.qibla-icon {
-    color: var(--gold-light);
-    font-size: 75px;
+.qibla-compass::before,
+.qibla-compass::after {
+    content: "";
 
-    filter: drop-shadow(0 0 18px rgba(215, 189, 135, 0.20));
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.qibla-compass::before {
+    inset: 9px;
+    border: 1px solid rgba(140,150,144,.13);
+}
+
+.qibla-compass::after {
+    inset: 24px;
+    border: 1px dashed rgba(140,150,144,.15);
+}
+
+.compass-direction {
+    position: absolute;
+    z-index: 2;
+
+    color: var(--muted);
+    font-family: sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.compass-direction.north {
+    top: 16px;
+    color: var(--gold);
+}
+
+.compass-direction.south {
+    bottom: 16px;
+}
+
+.compass-direction.east {
+    right: 17px;
+}
+
+.compass-direction.west {
+    left: 17px;
+}
+
+.compass-ring {
+    position: relative;
+
+    width: 65%;
+    height: 65%;
+
+    display: grid;
+    place-items: center;
+
+    border: 1px solid rgba(216,190,130,.20);
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.012);
+}
+
+.compass-needle {
+    position: absolute;
+    inset: 0;
+
+    border-radius: 50%;
+    transition: transform .4s ease;
+}
+
+.needle-top,
+.needle-bottom {
+    position: absolute;
+    left: 50%;
+
+    width: 0;
+    height: 0;
+
+    transform: translateX(-50%);
+}
+
+.needle-top {
+    top: 8%;
+
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 48px solid var(--gold);
+    
+    filter: drop-shadow(0 0 7px rgba(216,190,130,.25));
+}
+
+.needle-bottom {
+    bottom: 8%;
+
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 48px solid #59645c;
+}
+
+.compass-center {
+    position: relative;
+    z-index: 3;
+
+    width: 43px;
+    height: 43px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+    border: 1px solid var(--border-gold);
+
+    background: #172019;
+    color: var(--gold-light);
+
+    font-family: 'Amiri Quran', serif;
+    font-size: 24px;
+}
+
+#qiblaDegree {
+    color: var(--gold);
+    font-size: 46px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    direction: ltr;
+}
+
+#qiblaDirection,
+#compassStatus {
+    margin: 8px 0;
 }
 
 /* =========================================
-   PROGRESS
+   TRACKER & PROGRESS
 ========================================= */
 
 .progress {
+    width: 100%;
     height: 9px;
 
-    background: rgba(255, 255, 255, 0.08);
+    margin: 15px 0 22px;
 
-    border-radius: 20px;
     overflow: hidden;
+    border-radius: 20px;
 
-    margin: 15px 0;
+    background: rgba(255,255,255,.07);
 }
 
 .progress span {
     display: block;
 
-    height: 100%;
     width: 0;
+    height: 100%;
+
+    border-radius: inherit;
 
     background:
         linear-gradient(
             90deg,
-            #a6c5a8,
-            var(--gold-light)
+            #415c46,
+            var(--gold)
         );
 
-    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(216,190,130,.12);
 
-    transition: width 0.4s ease;
+    transition: width .4s ease;
 }
 
-/* =========================================
-   TRACKER & SETTINGS
-========================================= */
+#progressText {
+    color: var(--gold-light);
+}
 
 .tracker-row,
 .setting-row {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    gap: 12px;
 
-    padding: 15px 3px;
+    padding: 16px 3px;
 
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--border-soft);
+    font-size: 14px;
+}
+
+.tracker-row:last-child,
+.setting-row:last-child {
+    border-bottom: none;
 }
 
 input[type="checkbox"] {
     width: 19px;
     height: 19px;
-
     accent-color: var(--gold);
+    cursor: pointer;
 }
 
 .iqama-setting {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
+    gap: 12px;
 
-    padding: 13px 0;
-
-    border-bottom: 1px solid var(--border);
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border-soft);
 }
 
 .iqama-setting input {
-    width: 100px;
-
+    width: 105px;
     padding: 10px;
 
-    color: white;
-
+    border: 1px solid var(--border);
     border-radius: 11px;
-    text-align: center;
 
+    background: #151a17;
+    color: var(--gold-light);
+
+    text-align: center;
     outline: none;
+    color-scheme: dark;
 }
 
 /* =========================================
@@ -867,47 +1213,55 @@ input[type="checkbox"] {
 .bottom-nav {
     position: fixed;
 
-    z-index: 100;
-
     bottom: 0;
     left: 0;
     right: 0;
+    z-index: 100;
 
     display: flex;
+    align-items: center;
     justify-content: space-around;
 
-    background: rgba(8, 15, 11, 0.72);
+    padding: 10px 5px calc(10px + env(safe-area-inset-bottom));
 
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(10,17,13,.91);
 
-    padding: 11px 3px calc(11px + env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(140,150,144,.12);
 
-    backdrop-filter: blur(35px) saturate(180%);
-    -webkit-backdrop-filter: blur(35px) saturate(180%);
+    backdrop-filter: blur(28px) saturate(145%);
+    -webkit-backdrop-filter: blur(28px) saturate(145%);
 
     box-shadow:
-        0 -10px 35px rgba(0, 0, 0, 0.20),
-        inset 0 1px 0 rgba(255, 255, 255, 0.07);
+        0 -8px 30px rgba(0,0,0,.22),
+        inset 0 1px 0 rgba(255,255,255,.025);
 }
 
 .nav-item {
-    background: none;
+    flex: 1;
+    min-width: 0;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+
+    padding: 5px 2px;
+
+    background: transparent;
     border: none;
 
-    color: var(--muted);
+    color: #758078;
 
-    min-width: 50px;
-
-    transition: 0.2s;
+    transition: .2s;
 }
 
 .nav-item b {
-    display: block;
+    font-size: 23px;
+    font-weight: 400;
+    line-height: 1.2;
 
-    font-size: 22px;
-    font-weight: normal;
-
-    transition: 0.2s;
+    transition: .2s;
 }
 
 .nav-item small {
@@ -920,7 +1274,7 @@ input[type="checkbox"] {
 
 .nav-item.active b {
     transform: translateY(-2px);
-    text-shadow: 0 0 15px rgba(215, 189, 135, 0.30);
+    text-shadow: 0 0 14px rgba(216,190,130,.25);
 }
 
 /* =========================================
@@ -936,8 +1290,13 @@ input[type="checkbox"] {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.16);
+    background: #344238;
     border-radius: 20px;
+}
+
+::selection {
+    background: rgba(216,190,130,.22);
+    color: var(--text);
 }
 
 /* =========================================
@@ -946,27 +1305,41 @@ input[type="checkbox"] {
 
 @media (max-width: 600px) {
 
+    body {
+        padding-bottom: 100px;
+    }
+
     .topbar {
-        height: 76px;
-        padding: 10px 17px;
+        height: 75px;
+        width: calc(100% - 28px);
     }
 
     .page {
-        width: calc(100% - 24px);
+        width: calc(100% - 26px);
+        margin-top: 15px;
     }
 
     .hero {
-        padding: 21px;
-        border-radius: 25px;
+        padding: 25px 18px;
+        border-radius: 23px;
     }
 
     .hero h1 {
-        font-size: clamp(36px, 10vw, 49px);
+        font-size: clamp(37px, 10vw, 50px);
+    }
+
+    .next-prayer {
+        padding: 16px;
+        margin-top: 21px;
+    }
+
+    #countdown {
+        font-size: 20px;
     }
 
     .panel {
-        padding: 16px;
-        border-radius: 21px;
+        padding: 18px;
+        border-radius: 20px;
     }
 
     .prayer-grid {
@@ -974,8 +1347,20 @@ input[type="checkbox"] {
     }
 
     .prayer-card {
-        border-radius: 16px;
-        padding: 13px 4px;
+        padding: 14px 5px;
+        border-radius: 15px;
+    }
+
+    .prayer-card strong {
+        font-size: 15px;
+    }
+
+    .quick-grid {
+        gap: 9px;
+    }
+
+    .quick-grid button {
+        min-height: 88px;
     }
 
     .quran-text {
@@ -984,17 +1369,34 @@ input[type="checkbox"] {
     }
 
     .quran-basmala {
-        font-size: 26px;
+        font-size: 27px;
+    }
+
+    .daily-verse {
+        font-size: 23px;
+    }
+
+    #surahList,
+    #juzList {
+        grid-template-columns: 1fr;
     }
 
     .bottom-nav {
-        padding-left: 2px;
-        padding-right: 2px;
+        padding-left: 3px;
+        padding-right: 3px;
+    }
+
+    .nav-item small {
+        font-size: 9px;
+    }
+
+    .qibla-compass {
+        width: min(250px, 75vw);
     }
 }
 
 /* =========================================
-   DESKTOP
+   TABLET & DESKTOP
 ========================================= */
 
 @media (min-width: 650px) {
@@ -1006,10 +1408,14 @@ input[type="checkbox"] {
     .prayer-grid {
         grid-template-columns: repeat(6, 1fr);
     }
+
+    .page {
+        margin-top: 25px;
+    }
 }
 
 /* =========================================
-   REDUCE MOTION
+   ACCESSIBILITY
 ========================================= */
 
 @media (prefers-reduced-motion: reduce) {
@@ -1018,7 +1424,7 @@ input[type="checkbox"] {
     *::before,
     *::after {
         scroll-behavior: auto !important;
-        animation-duration: 0.01ms !important;
-        transition-duration: 0.01ms !important;
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
     }
 }
