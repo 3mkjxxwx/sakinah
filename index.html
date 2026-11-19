@@ -4,204 +4,295 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#080d0b">
-    <meta name="description" content="سَكِينَة - رفيقك للصلاة والقرآن والأذكار">
+    <meta name="theme-color" content="#0a110d">
+    <meta name="description" content="سكينة - رفيقك للصلاة والقرآن والأذكار">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="سكينة">
 
-    <link rel="manifest" href="./manifest.json">
-    <link rel="stylesheet" href="./style.css">
+    <title>SAKINAH | سكينة</title>
 
-    <title>سَكِينَة | SAKINAH</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Amiri:wght@400;700&family=Amiri+Quran&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 <header class="topbar">
     <div class="brand">
-        <img class="logo" src="./icons/icon-192.png" alt="سَكِينَة">
+        <div class="logo">س</div>
         <div>
             <h2>سَكِينَة</h2>
             <small>SAKINAH</small>
         </div>
     </div>
-    <button class="icon-btn" id="settingsShortcut" aria-label="الإعدادات">⚙</button>
+    <button class="icon-btn" id="settingsShortcut">⚙</button>
 </header>
 
-<main>
+<!-- الرئيسية -->
+<main id="homePage" class="page active">
 
-<section class="page active" id="homePage">
+    <section class="hero" id="prayerHero" data-scene="night">
+        <p id="hijriDate">التاريخ الهجري</p>
 
-    <div class="hero" id="prayerHero">
-        <p id="hijriDate">مرحباً بك في سكينة</p>
         <h1 id="clock">--:--:--</h1>
-        <p id="gregorianDate">جاري تحميل التاريخ...</p>
+
+        <p id="gregorianDate"></p>
 
         <div class="next-prayer">
             <div>
-                <small id="nextPrayerLabel">الصلاة القادمة</small>
-                <h2 id="nextPrayerName">جاري الحساب...</h2>
+                <small>الصلاة القادمة</small>
+                <h2 id="nextPrayerName">الفجر</h2>
             </div>
             <strong id="countdown">--:--:--</strong>
         </div>
 
-        <div class="iqama-box" id="iqamaBox" hidden>
-            <small>الوقت المتبقي للإقامة</small>
+        <p id="locationLabel">الموقع: المدينة المنورة</p>
+
+        <button id="locationButton" class="outline-btn">
+            تحديث الموقع
+        </button>
+    </section>
+
+    <section class="section">
+        <h3>مواقيت الصلاة</h3>
+        <div id="prayerGrid" class="prayer-grid">
+            جاري تحميل المواقيت...
+        </div>
+    </section>
+
+    <section class="panel">
+        <h3>الإقامة</h3>
+
+        <div class="iqama-line">
+            <span id="iqamaPrayer">الإقامة القادمة</span>
             <strong id="iqamaCountdown">--:--</strong>
         </div>
 
-        <p id="locationLabel">الموقع: لم يتم تحديده</p>
-        <button class="outline-btn" id="locationButton">تحديد موقعي ومواقيت الصلاة</button>
-    </div>
+        <p id="iqamaStatus" class="muted">
+            يتم حساب وقت الإقامة تلقائياً.
+        </p>
 
-    <div class="section">
-        <h3>مواقيت الصلاة</h3>
-        <div class="prayer-grid" id="prayerGrid">
-            <div class="prayer-card"><small>الفجر</small><strong>--:--</strong></div>
-            <div class="prayer-card"><small>الشروق</small><strong>--:--</strong></div>
-            <div class="prayer-card"><small>الظهر</small><strong>--:--</strong></div>
-            <div class="prayer-card"><small>العصر</small><strong>--:--</strong></div>
-            <div class="prayer-card"><small>المغرب</small><strong>--:--</strong></div>
-            <div class="prayer-card"><small>العشاء</small><strong>--:--</strong></div>
-        </div>
-    </div>
+        <button id="stopAdhan" class="outline-btn">
+            إيقاف الأذان
+        </button>
 
-    <div class="panel adhan-panel">
-        <h3>الأذان والتنبيهات</h3>
-        <p class="muted" id="adhanStatus">الأذان جاهز للتشغيل عند حلول الصلاة أثناء فتح التطبيق.</p>
-        <button class="primary-btn" id="testAdhan">تجربة صوت الأذان</button>
-        <button class="outline-btn" id="stopAdhan">إيقاف الأذان</button>
-        <button class="outline-btn" id="notificationPermission">تفعيل الإشعارات</button>
-    </div>
+        <audio id="adhanAudio" preload="none"></audio>
+    </section>
 
-    <div class="section">
-        <h3>الوصول السريع</h3>
+    <section class="panel">
+        <h3>عباداتك اليومية</h3>
+
         <div class="quick-grid">
             <button data-page="quranPage">۞<span>القرآن الكريم</span></button>
-            <button data-page="adhkarPage">◉<span>الأذكار</span></button>
+            <button data-page="azkarPage">◉<span>الأذكار</span></button>
             <button data-page="qiblaPage">⌖<span>القبلة</span></button>
-            <button data-page="trackerPage">✓<span>متابعة الصلاة</span></button>
+            <button data-page="trackerPage">✧<span>عباداتي</span></button>
         </div>
-    </div>
+    </section>
 
-    <div class="panel">
-        <h3>آية اليوم</h3>
-        <p class="daily-verse" id="dailyVerse">إِنَّ مَعَ الْعُسْرِ يُسْرًا</p>
-        <p id="dailyVerseRef">سورة الشرح - الآية ٦</p>
-    </div>
-</section>
+    <section class="panel">
+        <h3>آية للتدبر</h3>
+        <p id="dailyVerse" class="daily-verse"></p>
+        <p id="dailyVerseRef"></p>
+    </section>
 
-<section class="page" id="quranPage">
+</main>
+
+<!-- القرآن -->
+<main id="quranPage" class="page">
+
     <h2>القرآن الكريم</h2>
-    <p class="muted">اقرأ وتدبر كلام الله</p>
+    <p class="muted">مصحف بالرسم العثماني</p>
 
     <div class="tabs">
-        <button id="surahTab">السور</button>
+        <button id="surahTab" class="selected">السور</button>
         <button id="juzTab">الأجزاء</button>
     </div>
 
-    <input class="search" id="quranSearch" placeholder="ابحث عن سورة..." autocomplete="off">
+    <input id="quranSearch" class="search"
+        placeholder="ابحث عن سورة...">
 
     <div id="surahList"></div>
     <div id="juzList" hidden></div>
 
-    <div class="panel" id="readerPanel" hidden>
+    <section id="readerPanel" class="panel" hidden>
         <div class="reader-header">
-            <button class="outline-btn" id="backToSurahs">رجوع</button>
-            <h2 id="readerTitle">السورة</h2>
+            <h2 id="readerTitle"></h2>
+            <button id="backToSurahs" class="outline-btn">رجوع</button>
         </div>
-        <div id="quranLoading" class="muted center"></div>
-        <div class="quran-basmala" id="basmala" hidden>بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
-        <div class="quran-text" id="quranText"></div>
-        <button class="primary-btn" id="downloadQuran">حفظ السورة للقراءة دون إنترنت</button>
-    </div>
-</section>
 
-<section class="page" id="adhkarPage">
-    <h2>الأذكار</h2>
-    <p class="muted">اذكر الله واطمئن قلبك</p>
-    <div id="adhkarContainer"></div>
-</section>
-
-<section class="page" id="qiblaPage">
-    <h2>اتجاه القبلة</h2>
-    <p class="muted">وجّه هاتفك لمعرفة اتجاه الكعبة المشرفة</p>
-    <div class="panel center">
-        <div class="qibla-compass">
-            <span class="compass-direction north">N</span>
-            <span class="compass-direction south">S</span>
-            <span class="compass-direction east">E</span>
-            <span class="compass-direction west">W</span>
-            <div class="compass-ring">
-                <div class="compass-needle" id="compassNeedle">
-                    <div class="needle-top"></div>
-                    <div class="needle-bottom"></div>
-                </div>
-                <div class="compass-center">ك</div>
-            </div>
+        <div id="basmala" class="quran-basmala" hidden>
+            بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ
         </div>
-        <h2 id="qiblaDegree">--°</h2>
-        <p id="qiblaDirection">حدد موقعك لحساب اتجاه القبلة</p>
-        <p class="muted" id="compassStatus">البوصلة تحتاج إلى مستشعر اتجاه في جهازك</p>
-        <button class="primary-btn" id="enableCompass">تشغيل البوصلة</button>
-    </div>
-</section>
 
-<section class="page" id="trackerPage">
-    <h2>متابعة الصلاة</h2>
-    <p class="muted">تابع صلواتك اليومية</p>
-    <div class="panel">
-        <h3>إنجاز اليوم</h3>
-        <h2 id="progressText">0 من 5 صلوات</h2>
-        <div class="progress"><span id="progressBar"></span></div>
-        <div id="trackerList"></div>
-        <button class="outline-btn" id="resetTracker">إعادة تعيين اليوم</button>
-    </div>
-</section>
+        <p id="quranLoading" class="muted"></p>
+        <div id="quranText" class="quran-text"></div>
 
-<section class="page" id="settingsPage">
-    <h2>الإعدادات</h2>
-    <p class="muted">تخصيص تجربة سكينة</p>
-
-    <div class="panel">
-        <h3>الموقع</h3>
-        <p class="muted" id="settingsLocation">لم يتم تحديد الموقع</p>
-        <button class="primary-btn" id="settingsLocationButton">تحديث الموقع</button>
-    </div>
-
-    <div class="panel">
-        <h3>الإقامة بعد الأذان</h3>
-        <div class="iqama-setting"><span>الفجر</span><strong>20 دقيقة</strong></div>
-        <div class="iqama-setting"><span>الظهر</span><strong>20 دقيقة</strong></div>
-        <div class="iqama-setting"><span>العصر</span><strong>15 دقيقة</strong></div>
-        <div class="iqama-setting"><span>المغرب</span><strong>15 دقيقة</strong></div>
-        <div class="iqama-setting"><span>العشاء</span><strong>10 دقائق</strong></div>
-    </div>
-
-    <div class="panel">
-        <h3>التطبيق دون إنترنت</h3>
-        <p class="muted" id="offlineStatus">سيتم حفظ ملفات التطبيق عند تثبيته.</p>
-        <button class="primary-btn" id="cacheApp">تحديث الملفات المحفوظة</button>
-    </div>
-
-    <div class="panel">
-        <h3>عن التطبيق</h3>
-        <p class="muted">سَكِينَة — رفيقك للصلاة والقرآن والأذكار.</p>
-        <p class="muted">الإصدار 3.0</p>
-    </div>
-</section>
+        <button id="downloadQuran" class="primary-btn">
+            حفظ السورة
+        </button>
+    </section>
 
 </main>
 
+<!-- الأذكار -->
+<main id="azkarPage" class="page">
+
+    <h2>الأذكار</h2>
+    <p class="muted">حصنك اليومي من القرآن والسنة</p>
+
+    <div class="quick-grid">
+        <button data-azkar="morning">☀<span>أذكار الصباح</span></button>
+        <button data-azkar="evening">☾<span>أذكار المساء</span></button>
+        <button data-azkar="after">◉<span>بعد الصلاة</span></button>
+        <button data-azkar="sleep">☆<span>أذكار النوم</span></button>
+        <button data-azkar="wake">☼<span>أذكار الاستيقاظ</span></button>
+        <button data-azkar="daily">♡<span>أذكار متنوعة</span></button>
+        <button data-azkar="sayyid">✦<span>سيد الاستغفار</span></button>
+        <button data-azkar="ruqya">۞<span>الرقية الشرعية</span></button>
+    </div>
+
+    <section id="azkarResults" class="section"></section>
+
+</main>
+
+<!-- القبلة -->
+<main id="qiblaPage" class="page">
+
+    <h2>اتجاه القبلة</h2>
+
+    <section class="panel center">
+        <div class="qibla-compass">
+            <span class="compass-direction north">شمال</span>
+            <span class="compass-direction south">جنوب</span>
+            <span class="compass-direction east">شرق</span>
+            <span class="compass-direction west">غرب</span>
+
+            <div class="compass-ring">
+                <div id="compassNeedle" class="compass-needle">
+                    <div class="needle-top"></div>
+                    <div class="needle-bottom"></div>
+                </div>
+                <div class="compass-center">⌖</div>
+            </div>
+        </div>
+
+        <h1 id="qiblaDegree">--°</h1>
+        <p id="qiblaDirection" class="muted">
+            اتجاه القبلة من موقعك
+        </p>
+
+        <button id="enableCompass" class="primary-btn">
+            تشغيل البوصلة
+        </button>
+
+        <p id="compassStatus" class="muted"></p>
+    </section>
+
+</main>
+
+<!-- العبادات -->
+<main id="trackerPage" class="page">
+
+    <h2>عباداتي اليومية</h2>
+
+    <section class="panel">
+        <h3 id="progressText">0 من 5 صلوات</h3>
+
+        <div class="progress">
+            <span id="progressBar"></span>
+        </div>
+
+        <div id="trackerList"></div>
+
+        <button id="resetTracker" class="outline-btn">
+            إعادة تعيين اليوم
+        </button>
+    </section>
+
+</main>
+
+<!-- الإعدادات -->
+<main id="settingsPage" class="page">
+
+    <h2>الإعدادات</h2>
+
+    <section class="panel">
+        <h3>الموقع</h3>
+        <p id="settingsLocation" class="muted">المدينة المنورة</p>
+
+        <button id="settingsLocationButton" class="outline-btn">
+            تحديد موقعي
+        </button>
+    </section>
+
+    <section class="panel">
+        <h3>الإقامة التقديرية</h3>
+        <p class="muted">
+            حدد عدد الدقائق بين الأذان والإقامة حسب مسجدك.
+        </p>
+
+        <div id="iqamaSettings"></div>
+    </section>
+
+    <section class="panel">
+        <h3>التنبيهات</h3>
+
+        <button id="enableNotifications" class="primary-btn">
+            تفعيل الإشعارات
+        </button>
+
+        <p id="notificationStatus" class="muted">
+            الإشعارات تحتاج موافقة المتصفح.
+        </p>
+    </section>
+
+    <section class="panel">
+        <h3>التطبيق</h3>
+
+        <button id="cacheApp" class="primary-btn">
+            تحديث ملفات التطبيق
+        </button>
+
+        <p id="offlineStatus" class="muted"></p>
+    </section>
+
+</main>
+
+<!-- التنقل -->
 <nav class="bottom-nav">
-    <button class="nav-item active" data-page="homePage"><b>⌂</b><small>الرئيسية</small></button>
-    <button class="nav-item" data-page="quranPage"><b>۞</b><small>القرآن</small></button>
-    <button class="nav-item" data-page="adhkarPage"><b>◉</b><small>الأذكار</small></button>
-    <button class="nav-item" data-page="qiblaPage"><b>⌖</b><small>القبلة</small></button>
-    <button class="nav-item" data-page="settingsPage"><b>⚙</b><small>الإعدادات</small></button>
+
+    <button class="nav-item active" data-page="homePage">
+        <b>⌂</b><small>الرئيسية</small>
+    </button>
+
+    <button class="nav-item" data-page="quranPage">
+        <b>۞</b><small>القرآن</small>
+    </button>
+
+    <button class="nav-item" data-page="azkarPage">
+        <b>◉</b><small>الأذكار</small>
+    </button>
+
+    <button class="nav-item" data-page="qiblaPage">
+        <b>⌖</b><small>القبلة</small>
+    </button>
+
+    <button class="nav-item" data-page="settingsPage">
+        <b>⚙</b><small>الإعدادات</small>
+    </button>
+
 </nav>
 
-<audio id="adhanAudio" src="./sounds/adhan.mp3" preload="auto"></audio>
+<script src="app.js"></script>
 
-<script src="./app.js"></script>
 </body>
 </html>
