@@ -309,7 +309,7 @@ function updatePrayerBackground(key) {
     if (!image) return;
 
     hero.style.backgroundImage =
-        `linear-gradient(rgba(8,11,9,.35),rgba(8,11,9,.60)),url("./images/${image}")`;
+        `linear-gradient(rgba(8,11,9,.35),rgba(8,11,9,.60)),`url("images/${image}")`;
 
     hero.style.backgroundSize = "cover";
     hero.style.backgroundPosition = "center";
