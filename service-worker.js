@@ -1,22 +1,18 @@
 
-"use strict";
-
-const CACHE_NAME = "sakinah-v1";
+const CACHE_NAME = "sakina-app-v3";
 
 const APP_FILES = [
     "./",
     "./index.html",
-    "./style.css",
     "./app.js",
-    "./manifest.json",
+    "./style.css",
+    "./sound/adhan.mp3",
     "./images/fajr.jpg",
     "./images/sunrise.jpg",
     "./images/dhuhr.jpg",
     "./images/asr.jpg",
     "./images/maghrib.jpg",
-    "./images/isha.jpg",
-    "./icons/icon-192.png",
-    "./icons/icon-512.png"
+    "./images/isha.jpg"
 ];
 
 self.addEventListener("install", event => {
@@ -44,39 +40,29 @@ self.addEventListener("activate", event => {
 });
 
 self.addEventListener("fetch", event => {
-    if (event.request.method !== "GET") return;
+    const request = event.request;
 
-    const url = new URL(event.request.url);
+    if (request.method !== "GET") return;
+
+    const url = new URL(request.url);
 
     if (url.origin !== self.location.origin) return;
 
     event.respondWith(
-        caches.match(event.request).then(cached => {
+        caches.match(request).then(cached => {
             if (cached) return cached;
 
-            return fetch(event.request).then(response => {
-                if (
-                    response &&
-                    response.status === 200 &&
-                    response.type === "basic"
-                ) {
+            return fetch(request).then(response => {
+                if (response.ok) {
                     const copy = response.clone();
 
                     caches.open(CACHE_NAME).then(cache => {
-                        cache.put(event.request, copy);
+                        cache.put(request, copy);
                     });
                 }
 
                 return response;
-            }).catch(() => {
-                if (event.request.mode === "navigate") {
-                    return caches.match("./index.html");
-                }
-
-                return new Response("غير متصل بالإنترنت", {
-                    status: 503
-                });
             });
-        })
+        }).catch(() => caches.match("./index.html"))
     );
 });
