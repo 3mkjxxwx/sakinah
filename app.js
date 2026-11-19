@@ -1,10 +1,10 @@
 
 "use strict";
 
-/* =========================================
-   SAKINAH — PART 1/3
-   Core / Storage / Clock / Prayer / Adhan
-========================================= */
+/* =====================================
+   SAKINAH — PART 1
+   Core / Prayer / Clock / Navigation
+===================================== */
 
 const $ = id => document.getElementById(id);
 
@@ -20,10 +20,7 @@ const PRAYERS = {
     Isha: "العشاء"
 };
 
-const MAIN_PRAYERS = [
-    "Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"
-];
-
+const MAIN_PRAYERS = ["Fajr", "Dhuhr", "Asr", "Maghrib", "Isha"];
 const PRAYER_KEYS = Object.keys(PRAYERS);
 
 const BACKGROUNDS = {
@@ -49,8 +46,6 @@ const IQAMA_DEFAULTS = {
     Isha: 10
 };
 
-const ADHAN_FILE = "./adhan.mp3";
-
 let currentLocation = { ...DEFAULT_LOCATION };
 let prayerTimes = null;
 let currentPrayer = null;
@@ -60,15 +55,15 @@ let currentSurah = null;
 let currentJuz = null;
 let readerMode = "surah";
 let lastAlertDate = loadJSON("sakina-last-alert", "");
-let adhanPlayedFor = loadJSON("sakina-adhan-played", "");
-let adhanAudio = null;
 
-/* التخزين */
+function setText(id, value) {
+    const element = $(id);
+    if (element) element.textContent = value;
+}
 
 function loadJSON(key, fallback) {
     try {
-        const value = localStorage.getItem(key);
-        return value === null ? fallback : JSON.parse(value);
+        return JSON.parse(localStorage.getItem(key)) ?? fallback;
     } catch {
         return fallback;
     }
@@ -78,13 +73,8 @@ function saveJSON(key, value) {
     try {
         localStorage.setItem(key, JSON.stringify(value));
     } catch (error) {
-        console.warn("Storage error:", error);
+        console.warn(error);
     }
-}
-
-function setText(id, value) {
-    const element = $(id);
-    if (element) element.textContent = value;
 }
 
 function escapeHTML(value) {
@@ -118,14 +108,12 @@ function formatTime(date) {
 function updateClock() {
     const now = new Date();
 
-    setText("clock",
-        new Intl.DateTimeFormat("ar-SA", {
-            hour: "numeric",
-            minute: "2-digit",
-            second: "2-digit",
-            hour12: true
-        }).format(now)
-    );
+    setText("clock", new Intl.DateTimeFormat("ar-SA", {
+        hour: "numeric",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true
+    }).format(now));
 
     const gregorian = new Intl.DateTimeFormat("ar-SA", {
         weekday: "long",
@@ -157,44 +145,8 @@ function parsePrayerTime(value, date) {
     if (!match) return null;
 
     const result = new Date(date);
-    result.setHours(
-        Number(match[1]),
-        Number(match[2]),
-        0,
-        0
-    );
-
+    result.setHours(Number(match[1]), Number(match[2]), 0, 0);
     return result;
-}
-
-function getCachedPrayerTimes() {
-    const saved = loadJSON("sakina-prayer-times", null);
-    if (!saved || saved.date !== localDateKey()) return null;
-
-    const result = {};
-
-    for (const key of PRAYER_KEYS) {
-        const date = new Date(saved.times[key]);
-        if (Number.isNaN(date.getTime())) return null;
-        result[key] = date;
-    }
-
-    return result;
-}
-
-function savePrayerTimes() {
-    if (!prayerTimes) return;
-
-    const times = {};
-
-    for (const key of PRAYER_KEYS) {
-        times[key] = prayerTimes[key].toISOString();
-    }
-
-    saveJSON("sakina-prayer-times", {
-        date: localDateKey(),
-        times
-    });
 }
 
 async function fetchPrayerTimes() {
@@ -217,23 +169,16 @@ async function fetchPrayerTimes() {
         if (!response.ok) throw new Error("Prayer API error");
 
         const json = await response.json();
-        if (json.code !== 200) throw new Error("Invalid prayer data");
+        if (json.code !== 200) throw new Error("Invalid data");
 
         const result = {};
 
         for (const key of PRAYER_KEYS) {
-            result[key] = parsePrayerTime(
-                json.data.timings[key],
-                date
-            );
-
-            if (!result[key]) {
-                throw new Error("Missing prayer: " + key);
-            }
+            result[key] = parsePrayerTime(json.data.timings[key], date);
+            if (!result[key]) throw new Error("Missing prayer: " + key);
         }
 
         prayerTimes = result;
-        savePrayerTimes();
 
         renderPrayerTimes();
         updateNextPrayer();
@@ -244,23 +189,9 @@ async function fetchPrayerTimes() {
         return true;
 
     } catch (error) {
-        console.warn("Offline prayer mode:", error);
-
-        prayerTimes = getCachedPrayerTimes();
-
-        if (prayerTimes) {
-            renderPrayerTimes();
-            updateNextPrayer();
-
-            setText("locationLabel", "الموقع: " + currentLocation.name);
-            setText("settingsLocation", currentLocation.name);
-
-            return true;
-        }
-
-        setText("locationLabel", "تعذر تحميل المواقيت");
-        setText("prayerGrid", "لا توجد مواقيت محفوظة لهذا اليوم.");
-
+        console.error(error);
+        setText("locationLabel", "تعذر تحميل مواقيت الصلاة");
+        setText("prayerGrid", "تحقق من اتصال الإنترنت");
         return false;
     }
 }
@@ -289,7 +220,7 @@ function getPrayerState() {
         const time = prayerTimes[key];
         const elapsed = now - time;
 
-        if (elapsed >= 0 && elapsed < 60 * 60000) {
+        if (elapsed >= 0 && elapsed < 23 * 60000) {
             return { type: "elapsed", key, time };
         }
 
@@ -316,35 +247,29 @@ function updateNextPrayer() {
 
     const now = new Date();
 
-    setText("nextPrayerName", PRAYERS[state.key]);
-    setText("nextName", PRAYERS[state.key]);
-
     if (state.type === "elapsed") {
-        const totalSeconds = Math.floor(
-            (now - state.time) / 1000
-        );
+        const mins = Math.floor((now - state.time) / 60000);
 
-        const minutes = Math.floor(totalSeconds / 60);
-        const seconds = totalSeconds % 60;
+        setText("nextPrayerName", PRAYERS[state.key]);
+        setText("nextName", PRAYERS[state.key]);
 
         setText(
             "countdown",
-            `مضى على أذان ${PRAYERS[state.key]} ${minutes} دقيقة و${seconds} ثانية`
+            `مضى على أذان ${PRAYERS[state.key]} ${mins} دقيقة`
         );
-
     } else {
         const difference = Math.max(0, state.time - now);
-
         const hours = Math.floor(difference / 3600000);
-        const minutes = Math.floor(difference % 3600000 / 60000);
-        const seconds = Math.floor(difference % 60000 / 1000);
+        const minutes = Math.floor((difference % 3600000) / 60000);
+        const seconds = Math.floor((difference % 60000) / 1000);
 
-        setText(
-            "countdown",
-            [hours, minutes, seconds]
-                .map(v => String(v).padStart(2, "0"))
-                .join(":")
-        );
+        const countdown = [hours, minutes, seconds]
+            .map(v => String(v).padStart(2, "0"))
+            .join(":");
+
+        setText("nextPrayerName", PRAYERS[state.key]);
+        setText("nextName", PRAYERS[state.key]);
+        setText("countdown", countdown);
     }
 
     currentPrayer = state.key;
@@ -369,92 +294,18 @@ function updatePrayerBackground(key) {
     if (!image) return;
 
     hero.style.backgroundImage =
-        `linear-gradient(rgba(8,11,9,.35),rgba(8,11,9,.60)),url("./images/${image}")`;
+        `linear-gradient(rgba(8,11,9,.35),rgba(8,11,9,.60)), url("./images/${image}")`;
 
     hero.style.backgroundSize = "cover";
     hero.style.backgroundPosition = "center";
     hero.style.backgroundRepeat = "no-repeat";
 }
 
-/* الأذان الصوتي */
-
-function setupAdhan() {
-    adhanAudio = $("adhanAudio");
-
-    if (!adhanAudio) {
-        adhanAudio = new Audio(ADHAN_FILE);
-        adhanAudio.id = "adhanAudio";
-    }
-
-    adhanAudio.preload = "auto";
-    adhanAudio.src = ADHAN_FILE;
-}
-
-async function playAdhan(key) {
-    if (!adhanAudio) setupAdhan();
-
-    const alertKey = localDateKey() + "-" + key;
-
-    if (adhanPlayedFor === alertKey) return;
-
-    try {
-        adhanAudio.currentTime = 0;
-        await adhanAudio.play();
-
-        adhanPlayedFor = alertKey;
-        saveJSON("sakina-adhan-played", alertKey);
-
-        setText("iqamaStatus", "حان وقت صلاة " + PRAYERS[key]);
-
-    } catch (error) {
-        console.warn("Adhan playback blocked:", error);
-
-        setText(
-            "iqamaStatus",
-            "حان وقت الصلاة. اضغط تشغيل الأذان للسماح بالصوت."
-        );
-    }
-}
-
-function stopAdhan() {
-    if (!adhanAudio) return;
-
-    adhanAudio.pause();
-    adhanAudio.currentTime = 0;
-
-    setText("iqamaStatus", "تم إيقاف الأذان.");
-}
-
-/* اكتشاف وقت الأذان */
-
-function checkAdhanTime() {
-    if (!prayerTimes) return;
-
-    const now = new Date();
-
-    for (const key of MAIN_PRAYERS) {
-        const prayer = prayerTimes[key];
-        const difference = Math.abs(now - prayer);
-
-        if (difference <= 1500) {
-            const alertKey = localDateKey() + "-" + key;
-
-            if (lastAlertDate !== alertKey) {
-                lastAlertDate = alertKey;
-                saveJSON("sakina-last-alert", alertKey);
-
-                playAdhan(key);
-                sendPrayerNotification(key);
-            }
-        }
-    }
-}
-
 /* الموقع */
 
 function requestLocation() {
     if (!navigator.geolocation) {
-        alert("متصفحك لا يدعم تحديد الموقع.");
+        alert("متصفحك لا يدعم تحديد الموقع");
         return;
     }
 
@@ -469,55 +320,41 @@ function requestLocation() {
             };
 
             saveJSON("sakina-location", currentLocation);
-
             calculateQibla();
 
             setText("locationLabel", "الموقع: موقعي الحالي");
 
-            alert("تم تحديد موقعك. مواقيت الصلاة الحالية ما زالت على تبوك.");
+            alert("تم تحديد موقعك. مواقيت الصلاة ما زالت محسوبة على تبوك.");
         },
         error => {
             console.error(error);
             setText("locationLabel", "تعذر تحديد الموقع");
+            alert("اسمح للمتصفح بالوصول إلى الموقع.");
         },
-        {
-            enableHighAccuracy: true,
-            timeout: 15000
-        }
+        { enableHighAccuracy: true, timeout: 15000 }
     );
 }
 
 /* التنقل */
 
 function showPage(page) {
-    const id = page.endsWith("Page")
-        ? page
-        : page + "Page";
+    const id = page.endsWith("Page") ? page : page + "Page";
 
     document.querySelectorAll(".page").forEach(element => {
         element.classList.toggle("active", element.id === id);
     });
 
     document.querySelectorAll(".nav-item").forEach(button => {
-        const buttonPage = button.dataset.page || "";
-        button.classList.toggle(
-            "active",
-            buttonPage === id ||
-            buttonPage === page ||
-            buttonPage + "Page" === id
-        );
+        button.classList.toggle("active", button.dataset.page === id);
     });
 
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function setupNavigation() {
     document.addEventListener("click", event => {
-        const button = event.target.closest("[data-page]");
-        if (button) showPage(button.dataset.page);
+        const pageButton = event.target.closest("[data-page]");
+        if (pageButton) showPage(pageButton.dataset.page);
     });
 
     $("settingsShortcut")?.addEventListener("click", () => {
@@ -525,16 +362,13 @@ function setupNavigation() {
     });
 
     $("locationButton")?.addEventListener("click", requestLocation);
-
-    $("settingsLocationButton")?.addEventListener(
-        "click",
-        requestLocation
-    );
+    $("settingsLocationButton")?.addEventListener("click", requestLocation);
 }
+
 
 /* =====================================
    SAKINAH — PART 2
-   OFFLINE QURAN / SURAH / JUZ / AZKAR
+   Quran / Juz / Azkar / Daily Verse
 ===================================== */
 
 const SURAH_NAMES = [
@@ -558,39 +392,6 @@ const SURAH_NAMES = [
 "النصر","المسد","الإخلاص","الفلق","الناس"
 ];
 
-const BASMALA =
-"بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
-
-let quranData = null;
-let quranReady = false;
-
-async function loadOfflineQuran() {
-    try {
-        const response = await fetch("./data/quran.json");
-
-        if (!response.ok) {
-            throw new Error("Quran file missing");
-        }
-
-        quranData = await response.json();
-
-        if (!Array.isArray(quranData.surahs) ||
-            quranData.surahs.length !== 114) {
-            throw new Error("Invalid Quran data");
-        }
-
-        quranReady = true;
-        console.log("Offline Quran loaded");
-
-        return true;
-
-    } catch (error) {
-        console.error("Quran:", error);
-        quranReady = false;
-        return false;
-    }
-}
-
 function renderSurahs() {
     const list = $("surahList");
     if (!list) return;
@@ -610,20 +411,31 @@ function renderJuz() {
     list.innerHTML = Array.from({ length: 30 }, (_, index) => `
         <button type="button" data-juz="${index + 1}">
             الجزء ${index + 1}
+            <small>الجزء رقم ${index + 1}</small>
         </button>
     `).join("");
 }
 
 function quranTab(tab) {
+    const surahs = $("surahList");
+    const juz = $("juzList");
+    if (!surahs || !juz) return;
+
     const showSurahs = tab === "surahTab";
 
-    $("surahList").hidden = !showSurahs;
-    $("juzList").hidden = showSurahs;
+    surahs.hidden = !showSurahs;
+    juz.hidden = showSurahs;
 
     $("surahTab")?.classList.toggle("selected", showSurahs);
     $("juzTab")?.classList.toggle("selected", !showSurahs);
 
-    $("quranSearch").value = "";
+    const search = $("quranSearch");
+    if (search) {
+        search.value = "";
+        search.placeholder = showSurahs
+            ? "ابحث عن سورة..."
+            : "ابحث عن جزء...";
+    }
 }
 
 function filterQuran() {
@@ -641,136 +453,130 @@ function filterQuran() {
 }
 
 function showReader(title, mode) {
-    $("readerPanel").hidden = false;
+    const panel = $("readerPanel");
+    if (!panel) return;
 
+    panel.hidden = false;
     setText("readerTitle", title);
-    setText("quranText", "جارٍ فتح القرآن...");
+    setText("quranText", "جارٍ تحميل القرآن الكريم...");
+    setText("quranLoading", "");
 
-    $("surahList").hidden = true;
-    $("juzList").hidden = true;
-    $("quranSearch").hidden = true;
-    $("surahTab").hidden = true;
-    $("juzTab").hidden = true;
+    ["surahList", "juzList", "surahTab", "juzTab", "quranSearch"]
+        .forEach(id => $(id)?.setAttribute("hidden", ""));
 
     readerMode = mode;
 }
 
 function hideReader() {
-    $("readerPanel").hidden = true;
+    if ($("readerPanel")) $("readerPanel").hidden = true;
 
-    $("quranSearch").hidden = false;
-    $("surahTab").hidden = false;
-    $("juzTab").hidden = false;
+    $("surahTab")?.removeAttribute("hidden");
+    $("juzTab")?.removeAttribute("hidden");
+    $("quranSearch")?.removeAttribute("hidden");
 
-    $("surahList").hidden = readerMode !== "surah";
-    $("juzList").hidden = readerMode !== "juz";
+    if (readerMode === "juz") {
+        $("juzList")?.removeAttribute("hidden");
+        $("surahList")?.setAttribute("hidden", "");
+    } else {
+        $("surahList")?.removeAttribute("hidden");
+        $("juzList")?.setAttribute("hidden", "");
+    }
+
+    setText("quranLoading", "");
 }
-
-function renderAyahs(ayahs) {
-    const container = $("quranText");
-    if (!container) return;
-
-    container.innerHTML = ayahs.map(ayah => `
-        <span class="ayah">
-            ${escapeHTML(ayah.text)}
-            <span class="ayah-circle">
-                ${ayah.numberInSurah}
-            </span>
-        </span>
-    `).join(" ");
-}
-
-/* فتح سورة بدون إنترنت */
 
 async function openSurah(number) {
     if (number < 1 || number > 114) return;
 
-    if (!quranReady) {
-        setText("quranText", "ملف القرآن غير موجود.");
-        return;
-    }
-
     currentSurah = number;
     currentJuz = null;
+    readerMode = "surah";
 
     showReader(SURAH_NAMES[number - 1], "surah");
 
-    const surah = quranData.surahs[number - 1];
+    const basmala = $("basmala");
+    if (basmala) basmala.hidden = true;
 
-    if (!surah || !Array.isArray(surah.ayahs)) {
-        setText("quranText", "تعذر قراءة بيانات السورة.");
-        return;
+    try {
+        const response = await fetch(
+            `https://api.alquran.cloud/v1/surah/${number}/quran-uthmani`
+        );
+
+        if (!response.ok) throw new Error("Quran API error");
+
+        const json = await response.json();
+        if (json.code !== 200) throw new Error("Invalid Quran");
+
+        if (number !== 1 && number !== 9 && basmala) {
+            basmala.hidden = false;
+            basmala.textContent = "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ";
+        }
+
+        renderAyahs(json.data.ayahs);
+
+    } catch (error) {
+        console.error(error);
+        setText("quranText", "تعذر تحميل السورة. تحقق من الإنترنت.");
     }
-
-    const basmalaElement = $("basmala");
-
-    if (basmalaElement) {
-        const showBasmala = number !== 1 && number !== 9;
-
-        basmalaElement.hidden = !showBasmala;
-        basmalaElement.textContent = showBasmala
-            ? BASMALA
-            : "";
-    }
-
-    // لا نحذف أول آية من أي سورة
-    renderAyahs(surah.ayahs);
 }
-
-/* فتح الجزء */
 
 async function openJuz(number) {
     if (number < 1 || number > 30) return;
 
-    if (!quranReady) {
-        setText("quranText", "ملف القرآن غير موجود.");
-        return;
-    }
-
     currentJuz = number;
     currentSurah = null;
+    readerMode = "juz";
 
     showReader("الجزء " + number, "juz");
 
-    const groups = {};
+    if ($("basmala")) $("basmala").hidden = true;
 
-    quranData.surahs.forEach(surah => {
-        surah.ayahs.forEach(ayah => {
-            if (Number(ayah.juz) === number) {
-                if (!groups[surah.number]) {
-                    groups[surah.number] = {
-                        name: surah.name,
-                        ayahs: []
-                    };
-                }
+    try {
+        const response = await fetch(
+            `https://api.alquran.cloud/v1/juz/${number}/quran-uthmani`
+        );
 
-                groups[surah.number].ayahs.push(ayah);
-            }
+        if (!response.ok) throw new Error("Juz API error");
+
+        const json = await response.json();
+        if (json.code !== 200) throw new Error("Invalid Juz");
+
+        const groups = {};
+
+        json.data.ayahs.forEach(ayah => {
+            const name = ayah.surah.name;
+            if (!groups[name]) groups[name] = [];
+            groups[name].push(ayah);
         });
-    });
 
-    const html = Object.entries(groups).map(([id, group]) => `
-        <section class="juz-surah">
-            <h3>${escapeHTML(group.name)}</h3>
-
-            ${Number(id) !== 1 && Number(id) !== 9 &&
-                group.ayahs[0].numberInSurah === 1
-                ? `<p class="basmala">${BASMALA}</p>`
-                : ""}
-
-            ${group.ayahs.map(ayah => `
-                <span class="ayah">
-                    ${escapeHTML(ayah.text)}
-                    <span class="ayah-circle">
-                        ${ayah.numberInSurah}
+        $("quranText").innerHTML = Object.entries(groups).map(([name, verses]) => `
+            <section class="juz-surah">
+                <h3>${escapeHTML(name)}</h3>
+                ${verses.map(ayah => `
+                    <span class="ayah">
+                        ${escapeHTML(ayah.text)}
+                        <span class="ayah-circle">${ayah.numberInSurah}</span>
                     </span>
-                </span>
-            `).join(" ")}
-        </section>
-    `).join("");
+                `).join(" ")}
+            </section>
+        `).join("");
 
-    $("quranText").innerHTML =
-        html || "لا توجد آيات لهذا الجزء.";
+    } catch (error) {
+        console.error(error);
+        setText("quranText", "تعذر تحميل الجزء. حاول مرة أخرى.");
+    }
+}
+
+function renderAyahs(verses) {
+    const container = $("quranText");
+    if (!container) return;
+
+    container.innerHTML = verses.map(ayah => `
+        <span class="ayah">
+            ${escapeHTML(ayah.text)}
+            <span class="ayah-circle">${ayah.numberInSurah}</span>
+        </span>
+    `).join(" ");
 }
 
 function closeReader() {
@@ -778,16 +584,9 @@ function closeReader() {
 }
 
 function setupQuran() {
-    $("surahTab")?.addEventListener("click", () => {
-        quranTab("surahTab");
-    });
-
-    $("juzTab")?.addEventListener("click", () => {
-        quranTab("juzTab");
-    });
-
+    $("surahTab")?.addEventListener("click", () => quranTab("surahTab"));
+    $("juzTab")?.addEventListener("click", () => quranTab("juzTab"));
     $("quranSearch")?.addEventListener("input", filterQuran);
-
     $("backToSurahs")?.addEventListener("click", closeReader);
 
     $("surahList")?.addEventListener("click", event => {
@@ -802,7 +601,7 @@ function setupQuran() {
 }
 
 /* =====================================
-   AZKAR
+   الأذكار
 ===================================== */
 
 const AZKAR = {
@@ -839,9 +638,18 @@ const AZKAR = {
         items: [
             ["أستغفر الله",3,"أَسْتَغْفِرُ اللَّهَ."],
             ["اللهم أنت السلام",1,"اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ تَبَارَكْتَ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ."],
+            ["ذكر التوحيد",1,"لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ، اللَّهُمَّ لَا مَانِعَ لِمَا أَعْطَيْتَ، وَلَا مُعْطِيَ لِمَا مَنَعْتَ، وَلَا يَنْفَعُ ذَا الْجَدِّ مِنْكَ الْجَدُّ."],
+            ["ذكر التوحيد الثاني",1,"لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ، لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللَّهِ، لَا إِلَهَ إِلَّا اللَّهُ وَلَا نَعْبُدُ إِلَّا إِيَّاهُ، لَهُ النِّعْمَةُ وَلَهُ الْفَضْلُ وَلَهُ الثَّنَاءُ الْحَسَنُ، لَا إِلَهَ إِلَّا اللَّهُ مُخْلِصِينَ لَهُ الدِّينَ وَلَوْ كَرِهَ الْكَافِرُونَ."],
             ["سبحان الله",33,"سُبْحَانَ اللَّهِ."],
             ["الحمد لله",33,"الْحَمْدُ لِلَّهِ."],
-            ["الله أكبر",33,"اللَّهُ أَكْبَرُ."]
+            ["الله أكبر",33,"اللَّهُ أَكْبَرُ."],
+            ["تمام المائة",1,"لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ."],
+            ["آية الكرسي",1,"اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ..."],
+            ["الإخلاص",1,"قُلْ هُوَ اللَّهُ أَحَدٌ."],
+            ["الفلق",1,"قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ."],
+            ["الناس",1,"قُلْ أَعُوذُ بِرَبِّ النَّاسِ."],
+            ["عشر مرات بعد الفجر والمغرب",10,"لَا إِلَهَ إِلَّا اللَّهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ الْمُلْكُ وَلَهُ الْحَمْدُ يُحْيِي وَيُمِيتُ وَهُوَ عَلَى كُلِّ شَيْءٍ قَدِيرٌ."],
+            ["دعاء بعد الفجر",1,"اللَّهُمَّ إِنِّي أَسْأَلُكَ عِلْمًا نَافِعًا، وَرِزْقًا طَيِّبًا، وَعَمَلًا مُتَقَبَّلًا."]
         ]
     },
 
@@ -849,6 +657,7 @@ const AZKAR = {
         title: "أذكار النوم",
         items: [
             ["آية الكرسي",1,"اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ..."],
+            ["الإخلاص والفلق والناس",3,"قُلْ هُوَ اللَّهُ أَحَدٌ، وقُلْ أَعُوذُ بِرَبِّ الْفَلَقِ، وقُلْ أَعُوذُ بِرَبِّ النَّاسِ."],
             ["باسمك اللهم أموت وأحيا",1,"بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا."],
             ["سبحان الله",33,"سُبْحَانَ اللَّهِ."],
             ["الحمد لله",33,"الْحَمْدُ لِلَّهِ."],
@@ -885,7 +694,7 @@ const AZKAR = {
         items: [
             ["الفاتحة",7,"بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ. الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ..."],
             ["آية الكرسي",1,"اللَّهُ لَا إِلَٰهَ إِلَّا هُوَ الْحَيُّ الْقَيُّومُ..."],
-            ["آخر آيتين من البقرة",1,"آمَنَ الرَّسُولُ بِمَا أُنْزِلَ إِلَيْهِ مِنْ رَبِّهِ..."],
+            ["آخر آيتين من البقرة",1,"آمَنَ الرَّسُولُ بِمَا أُنْزِلَ إِلَيْهِ مِنْ رَبِّهِ وَالْمُؤْمِنُونَ..."],
             ["الإخلاص",3,"قُلْ هُوَ اللَّهُ أَحَدٌ."],
             ["الفلق",3,"قُلْ أَعُوذُ بِرَبِّ الْفَلَقِ."],
             ["الناس",3,"قُلْ أَعُوذُ بِرَبِّ النَّاسِ."]
@@ -896,7 +705,6 @@ const AZKAR = {
 function showAzkar(category) {
     const group = AZKAR[category];
     const container = $("azkarResults");
-
     if (!group || !container) return;
 
     container.innerHTML = `
@@ -906,21 +714,12 @@ function showAzkar(category) {
             ${group.items.map((item, index) => `
                 <article class="zikr-card">
                     <h3>${escapeHTML(item[0])}</h3>
-
-                    <p class="zikr-text">
-                        ${escapeHTML(item[2])}
+                    <p class="zikr-text">${escapeHTML(item[2])}</p>
+                    <p class="muted">عدد التكرار: ${item[1]}</p>
+                    <p>المتبقي:
+                        <strong id="zikrCount${index}">${item[1]}</strong>
                     </p>
-
-                    <p>عدد التكرار: ${item[1]}</p>
-
-                    <p>
-                        المتبقي:
-                        <strong id="zikrCount${index}">
-                            ${item[1]}
-                        </strong>
-                    </p>
-
-                    <button type="button" data-count="${index}">
+                    <button type="button" class="count-btn" data-count="${index}">
                         تسبيح
                     </button>
                 </article>
@@ -932,12 +731,9 @@ function showAzkar(category) {
         button.addEventListener("click", () => {
             const index = Number(button.dataset.count);
             const counter = $(`zikrCount${index}`);
+            if (!counter) return;
 
-            const value = Math.max(
-                0,
-                Number(counter.textContent) - 1
-            );
-
+            const value = Math.max(0, Number(counter.textContent) - 1);
             counter.textContent = value;
 
             if (value === 0) {
@@ -946,45 +742,45 @@ function showAzkar(category) {
             }
         });
     });
+
+    container.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
 function setupAzkar() {
     document.addEventListener("click", event => {
         const button = event.target.closest("[data-azkar]");
-
-        if (button) {
-            showAzkar(button.dataset.azkar);
-        }
+        if (button) showAzkar(button.dataset.azkar);
     });
 }
 
+/* آية للتدبر */
+
 const VERSES = [
-    ["إِنَّ مَعَ الْعُسْرِ يُسْرًا","الشرح - ٦"],
-    ["فَاذْكُرُونِي أَذْكُرْكُمْ","البقرة - ١٥٢"],
-    ["وَهُوَ مَعَكُمْ أَيْنَ مَا كُنْتُمْ","الحديد - ٤"],
-    ["إِنَّ اللَّهَ مَعَ الصَّابِرِينَ","البقرة - ١٥٣"],
-    ["وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ","هود - ٨٨"],
-    ["أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ","الرعد - ٢٨"]
+    ["إِنَّ مَعَ الْعُسْرِ يُسْرًا", "الشرح - ٦"],
+    ["فَاذْكُرُونِي أَذْكُرْكُمْ", "البقرة - ١٥٢"],
+    ["وَهُوَ مَعَكُمْ أَيْنَ مَا كُنْتُمْ", "الحديد - ٤"],
+    ["إِنَّ اللَّهَ مَعَ الصَّابِرِينَ", "البقرة - ١٥٣"],
+    ["وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ", "هود - ٨٨"],
+    ["أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ", "الرعد - ٢٨"]
 ];
 
 function newVerse() {
-    const verse = VERSES[
-        Math.floor(Math.random() * VERSES.length)
-    ];
-
+    const verse = VERSES[Math.floor(Math.random() * VERSES.length)];
     setText("dailyVerse", verse[0]);
     setText("dailyVerseRef", "سورة " + verse[1]);
 }
 
+
 /* =====================================
    SAKINAH — PART 3
-   QIBLA / TRACKER / IQAMA / ADHAN
+   Qibla / Tracker / Iqama / Notifications
 ===================================== */
 
 /* القبلة */
 
 function calculateQiblaBearing(lat, lon) {
     const rad = Math.PI / 180;
+    const deg = 180 / Math.PI;
 
     const p1 = lat * rad;
     const p2 = 21.4225 * rad;
@@ -996,7 +792,7 @@ function calculateQiblaBearing(lat, lon) {
         Math.sin(p1) * Math.cos(dl)
     );
 
-    return (angle / rad + 360) % 360;
+    return (angle * deg + 360) % 360;
 }
 
 function calculateQibla() {
@@ -1013,7 +809,6 @@ function calculateQibla() {
 
 function updateCompass() {
     const needle = $("compassNeedle");
-
     if (!needle) return;
 
     needle.style.transform =
@@ -1021,6 +816,8 @@ function updateCompass() {
 }
 
 async function enableCompass() {
+    const status = $("compassStatus");
+
     try {
         if (
             typeof DeviceOrientationEvent !== "undefined" &&
@@ -1034,17 +831,32 @@ async function enableCompass() {
             }
         }
 
+        window.removeEventListener("deviceorientation", handleCompass);
+        window.removeEventListener("deviceorientationabsolute", handleCompass);
+
+        window.addEventListener(
+            "deviceorientationabsolute",
+            handleCompass,
+            true
+        );
+
         window.addEventListener(
             "deviceorientation",
             handleCompass,
             true
         );
 
-        setText("compassStatus", "تم تشغيل البوصلة.");
+        if (status) {
+            status.textContent =
+                "تم تشغيل البوصلة. حرّك الجهاز بعيداً عن المعادن.";
+        }
 
     } catch (error) {
         console.error(error);
-        setText("compassStatus", "تعذر تشغيل البوصلة.");
+        if (status) {
+            status.textContent =
+                "تعذر تشغيل البوصلة. تأكد من أذونات الجهاز.";
+        }
     }
 }
 
@@ -1060,11 +872,10 @@ function handleCompass(event) {
     if (heading === null) return;
 
     compassHeading = (heading + 360) % 360;
-
     updateCompass();
 }
 
-/* العبادات */
+/* العبادات اليومية */
 
 const TRACKER_ITEMS = [
     "صلاة الفجر",
@@ -1090,23 +901,16 @@ function renderTracker() {
     container.innerHTML = TRACKER_ITEMS.map((item, index) => `
         <label class="tracker-row">
             <span>${item}</span>
-
-            <input
-                type="checkbox"
-                data-tracker="${index}"
-                ${saved[index] ? "checked" : ""}
-            >
+            <input type="checkbox" data-tracker="${index}"
+                ${saved[index] ? "checked" : ""}>
         </label>
     `).join("");
 
     container.querySelectorAll("[data-tracker]").forEach(input => {
         input.addEventListener("change", () => {
             const data = loadJSON(trackerStorageKey(), {});
-
             data[input.dataset.tracker] = input.checked;
-
             saveJSON(trackerStorageKey(), data);
-
             updateTracker();
         });
     });
@@ -1118,27 +922,20 @@ function updateTracker() {
     const container = $("trackerList");
     if (!container) return;
 
-    const inputs = [
-        ...container.querySelectorAll("[data-tracker]")
-    ];
-
+    const inputs = [...container.querySelectorAll("[data-tracker]")];
     const done = inputs.filter(input => input.checked).length;
     const total = TRACKER_ITEMS.length;
 
     setText("progressText", `${done} من ${total} عبادات`);
 
     const bar = $("progressBar");
-
-    if (bar) {
-        bar.style.width = `${done / total * 100}%`;
-    }
+    if (bar) bar.style.width = `${done / total * 100}%`;
 }
 
 function resetTracker() {
     if (!confirm("هل تريد إعادة تعيين عبادات اليوم؟")) return;
 
     localStorage.removeItem(trackerStorageKey());
-
     renderTracker();
 }
 
@@ -1146,79 +943,44 @@ function resetTracker() {
 
 function calculateIqama(key, prayerDate) {
     const minutes = IQAMA_DEFAULTS[key] || 15;
-
-    return new Date(
-        prayerDate.getTime() + minutes * 60000
-    );
+    return new Date(prayerDate.getTime() + minutes * 60000);
 }
 
 function updateIqamaCountdown() {
     if (!prayerTimes) return;
 
     const now = new Date();
-    let active = null;
+    let activePrayer = null;
 
     for (const key of MAIN_PRAYERS) {
         const prayerDate = prayerTimes[key];
         const end = calculateIqama(key, prayerDate);
 
         if (now >= prayerDate && now < end) {
-            active = { key, end };
+            activePrayer = { key, end };
             break;
         }
     }
 
-    if (!active) {
+    if (!activePrayer) {
         setText("iqamaPrayer", "لا توجد إقامة قريبة");
         setText("iqamaCountdown", "--:--");
-        setText("iqamaStatus", "سيتم حساب الإقامة تلقائياً.");
+        setText("iqamaStatus", "سيتم حساب الإقامة تلقائياً بعد الأذان.");
         return;
     }
 
-    const remaining = active.end - now;
-
+    const remaining = activePrayer.end - now;
     const minutes = Math.floor(remaining / 60000);
     const seconds = Math.floor(remaining % 60000 / 1000);
 
-    setText(
-        "iqamaPrayer",
-        "إقامة صلاة " + PRAYERS[active.key]
-    );
+    setText("iqamaPrayer", "إقامة صلاة " + PRAYERS[activePrayer.key]);
 
     setText(
         "iqamaCountdown",
-        `${String(minutes).padStart(2,"0")}:${String(seconds).padStart(2,"0")}`
+        `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`
     );
 
     setText("iqamaStatus", "الوقت المتبقي للإقامة التقديرية");
-}
-
-/* الأذان */
-
-function playAdhan() {
-    const audio = $("adhanAudio");
-
-    if (!audio) {
-        console.error("adhanAudio element missing");
-        return;
-    }
-
-    audio.pause();
-    audio.currentTime = 0;
-
-    audio.play().catch(error => {
-        console.error("Adhan playback failed:", error);
-        setText("notificationStatus", "تعذر تشغيل الأذان.");
-    });
-}
-
-function stopAdhan() {
-    const audio = $("adhanAudio");
-
-    if (!audio) return;
-
-    audio.pause();
-    audio.currentTime = 0;
 }
 
 /* الإشعارات */
@@ -1229,24 +991,33 @@ async function enableNotifications() {
         return;
     }
 
-    const permission = await Notification.requestPermission();
+    try {
+        const permission = await Notification.requestPermission();
 
-    setText(
-        "notificationStatus",
-        permission === "granted"
-            ? "تم تفعيل الإشعارات."
-            : "لم يتم السماح بالإشعارات."
-    );
+        if (permission === "granted") {
+            setText("notificationStatus", "تم تفعيل الإشعارات بنجاح.");
+
+            new Notification("سكينة", {
+                body: "تم تفعيل تنبيهات الصلاة."
+            });
+        } else {
+            setText("notificationStatus", "لم يتم السماح بالإشعارات.");
+        }
+
+    } catch (error) {
+        console.error(error);
+        setText("notificationStatus", "تعذر تفعيل الإشعارات.");
+    }
 }
 
 function sendPrayerNotification(key) {
     if (!("Notification" in window)) return;
-
     if (Notification.permission !== "granted") return;
 
     new Notification("سكينة - حان وقت الصلاة", {
         body: "حان الآن وقت صلاة " + PRAYERS[key],
-        icon: "./icons/icon-192.png"
+        icon: "./icons/icon-192.png",
+        tag: "prayer-" + key
     });
 }
 
@@ -1265,11 +1036,8 @@ function checkPrayerAlerts() {
             lastAlertDate !== alertKey
         ) {
             lastAlertDate = alertKey;
-
             saveJSON("sakina-last-alert", alertKey);
-
             sendPrayerNotification(key);
-            playAdhan();
         }
     }
 }
@@ -1292,10 +1060,36 @@ function setupSettings() {
         resetTracker
     );
 
-    $("stopAdhan")?.addEventListener(
-        "click",
-        stopAdhan
-    );
+    $("stopAdhan")?.addEventListener("click", () => {
+        const audio = $("adhanAudio");
+
+        if (audio) {
+            audio.pause();
+            audio.currentTime = 0;
+        }
+
+        setText("iqamaStatus", "تم إيقاف الصوت.");
+    });
+
+    $("cacheApp")?.addEventListener("click", async () => {
+        try {
+            if ("serviceWorker" in navigator) {
+                const registrations =
+                    await navigator.serviceWorker.getRegistrations();
+
+                for (const registration of registrations) {
+                    await registration.update();
+                }
+            }
+
+            setText("offlineStatus", "تم تحديث ملفات التطبيق.");
+            location.reload();
+
+        } catch (error) {
+            console.error(error);
+            setText("offlineStatus", "تعذر تحديث الملفات.");
+        }
+    });
 }
 
 /* ربط الأزرار */
@@ -1305,6 +1099,13 @@ function setupButtons() {
     setupQuran();
     setupAzkar();
     setupSettings();
+
+    $("downloadQuran")?.remove();
+
+    if ($("iqamaSettings")) {
+        $("iqamaSettings").innerHTML =
+            "<p class='muted'>يتم حساب الإقامة تلقائياً حسب المدد التقديرية.</p>";
+    }
 }
 
 /* تشغيل التطبيق */
@@ -1328,10 +1129,6 @@ async function init() {
     calculateQibla();
     newVerse();
 
-    // القرآن المحلي
-    await loadOfflineQuran();
-
-    // مواقيت الصلاة
     await fetchPrayerTimes();
 
     updateIqamaCountdown();
